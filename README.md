@@ -276,20 +276,6 @@ The S step is what most people skip and it's exactly what interviewers ask about
 
 ---
 
-## 🎯 What You Can Target After Each Phase
-
-| After Phase | Roles You Can Apply To | Ballpark Salary |
-|-------------|------------------------|-----------------|
-| Phase 2 | Data Analyst Intern, ML Intern | ₹3–6 LPA |
-| Phase 2.5 | AI Developer Trainee, Prompt Engineer | ₹5–10 LPA |
-| Phase 3 | Junior ML Engineer, Data Scientist | ₹8–15 LPA |
-| Phase 4 + DSA | ML Engineer, NLP Engineer | ₹12–20 LPA |
-| Phase 5 + Portfolio | AI/ML Engineer (Full Stack AI) | ₹15–25 LPA |
-
-> ⚡ **Real talk on what separates ₹12L from ₹30L+:** Deployed projects beat certificates every time. GenAI + LLMs is where the money is right now. One niche you're genuinely good at beats being average at everything. Open source contributions skip interview rounds. A single research paper — even a small one — is a cheat code for top-tier companies.
-
----
-
 ## 👥 Who Is This For?
 
 **You'll get the most out of this if you're:**
