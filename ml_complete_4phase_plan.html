@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#0D1117;--card:#161B27;--card2:#1C2235;--border:#252D42;
+  --text:#E8EDF8;--muted:#7A839E;--faint:#353D58;
+  --py:#4A90E2;--py-bg:rgba(74,144,226,0.10);--py-bd:rgba(74,144,226,0.28);
+  --math:#E2944A;--math-bg:rgba(226,148,74,0.10);--math-bd:rgba(226,148,74,0.28);
+  --ml:#4ACD8A;--ml-bg:rgba(74,205,138,0.10);--ml-bd:rgba(74,205,138,0.28);
+  --dl:#F472B6;--dl-bg:rgba(244,114,182,0.10);--dl-bd:rgba(244,114,182,0.28);
+  --proj:#A855F7;--proj-bg:rgba(168,85,247,0.10);--proj-bd:rgba(168,85,247,0.28);
+  --rev:#E2D44A;--rev-bg:rgba(226,212,74,0.08);--rev-bd:rgba(226,212,74,0.25);
+  --rest:#6B7280;--rest-bg:rgba(107,114,128,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+
+.hero{background:linear-gradient(135deg,#0D1117,#131A2E,#0D1117);padding:28px 24px 24px;border-bottom:1px solid var(--border);}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#F472B6;margin-bottom:10px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;}
+.hero-title span{color:#4A90E2;}
+.hero-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.legend{display:flex;gap:10px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+.phases{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 24px;position:sticky;top:0;z-index:20;}
+.phases::-webkit-scrollbar{display:none;}
+.ph-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:12px 15px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.ph-btn:hover{color:var(--text);}
+.ph-btn.on{color:var(--text);border-bottom-color:#A855F7;}
+.ph-btn.dl-tab.on{border-bottom-color:#F472B6;color:#F472B6;}
+
+.content{padding:20px 24px 60px;max-width:760px;margin:0 auto;}
+.ptab{display:none;}.ptab.on{display:block;}
+
+.phase-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;}
+.phase-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+
+.new-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(244,114,182,0.15);color:#F472B6;border:1px solid rgba(244,114,182,0.3);margin-left:10px;vertical-align:middle;}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.stat-n{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,#4A90E2,#F472B6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:3px;}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+
+.wcard{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.wcard.dl-card{border-color:rgba(244,114,182,0.2);}
+.wcard-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.wcard-head:hover{background:var(--card2);}
+.wnum{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--muted);flex-shrink:0;white-space:nowrap;}
+.wnum.proj{background:var(--proj-bg);border-color:var(--proj-bd);color:var(--proj);}
+.wnum.final{background:var(--ml-bg);border-color:var(--ml-bd);color:var(--ml);}
+.wnum.dl{background:var(--dl-bg);border-color:var(--dl-bd);color:var(--dl);}
+.wtitle{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.wchev{color:var(--faint);font-size:13px;transition:transform .3s;flex-shrink:0;}
+.wchev.open{transform:rotate(180deg);}
+.wbody{display:none;border-top:1px solid var(--border);}
+.wbody.open{display:block;}
+
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.ws-day{border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.ws-day:hover{opacity:.85;}
+.ws-day.active-day{border-color:rgba(255,255,255,.25)!important;box-shadow:0 0 0 2px rgba(255,255,255,.08);}
+.ws-dname{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.ws-subj{font-size:10px;font-weight:600;}
+.ws-py{background:var(--py-bg);border-color:var(--py-bd);}
+.ws-math{background:var(--math-bg);border-color:var(--math-bd);}
+.ws-ml{background:var(--ml-bg);border-color:var(--ml-bd);}
+.ws-dl{background:var(--dl-bg);border-color:var(--dl-bd);}
+.ws-proj{background:var(--proj-bg);border-color:var(--proj-bd);}
+.ws-rev{background:var(--rev-bg);border-color:var(--rev-bd);}
+.ws-rest{background:var(--rest-bg);border-color:rgba(107,114,128,.2);}
+
+.day-panel{padding:18px;}
+.dp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.dp-dayname{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+.dp-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid;}
+.dp-py{background:var(--py-bg);color:var(--py);border-color:var(--py-bd);}
+.dp-math{background:var(--math-bg);color:var(--math);border-color:var(--math-bd);}
+.dp-ml{background:var(--ml-bg);color:var(--ml);border-color:var(--ml-bd);}
+.dp-dl{background:var(--dl-bg);color:var(--dl);border-color:var(--dl-bd);}
+.dp-proj{background:var(--proj-bg);color:var(--proj);border-color:var(--proj-bd);}
+.dp-rev{background:var(--rev-bg);color:var(--rev);border-color:var(--rev-bd);}
+.dp-rest{background:var(--rest-bg);color:var(--rest);border-color:rgba(107,114,128,.3);}
+
+.task-block{border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid;}
+.task-block:last-child{margin-bottom:0;}
+.tb-py{background:var(--py-bg);border-color:var(--py);}
+.tb-math{background:var(--math-bg);border-color:var(--math);}
+.tb-ml{background:var(--ml-bg);border-color:var(--ml);}
+.tb-dl{background:var(--dl-bg);border-color:var(--dl);}
+.tb-proj{background:var(--proj-bg);border-color:var(--proj);}
+.tb-rev{background:var(--rev-bg);border-color:var(--rev);}
+.tb-rest{background:var(--rest-bg);border-color:var(--rest);border-left-style:dashed;}
+
+.tb-tag{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.tb-py .tb-tag{color:var(--py);}
+.tb-math .tb-tag{color:var(--math);}
+.tb-ml .tb-tag{color:var(--ml);}
+.tb-dl .tb-tag{color:var(--dl);}
+.tb-proj .tb-tag{color:var(--proj);}
+.tb-rev .tb-tag{color:var(--rev);}
+.tb-rest .tb-tag{color:var(--rest);}
+
+.tb-topic{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.tb-items{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.tb-items li{font-size:12px;color:var(--muted);display:flex;gap:8px;line-height:1.5;}
+.tb-items li::before{content:'–';color:var(--faint);flex-shrink:0;}
+.tb-res{margin-top:8px;font-size:11px;color:var(--faint);font-style:italic;}
+.tb-check{margin-top:10px;background:rgba(74,205,138,0.06);border:1px solid rgba(74,205,138,.2);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--ml);}
+.tb-check::before{content:'✓ Done when: ';font-weight:600;}
+
+.tip{background:rgba(244,114,182,.06);border:1px dashed rgba(244,114,182,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6;}
+.tip strong{color:#F472B6;}
+.tip-blue{background:rgba(91,142,240,.06);border:1px dashed rgba(91,142,240,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6;}
+.tip-blue strong{color:#5B8EF0;}
+
+.roadmap-strip{display:flex;gap:0;margin-bottom:22px;overflow:hidden;border-radius:10px;border:1px solid var(--border);}
+.rs-seg{flex:1;padding:12px 10px;text-align:center;border-right:1px solid var(--border);}
+.rs-seg:last-child{border-right:none;}
+.rs-n{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;margin-bottom:3px;}
+.rs-l{font-size:10px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">No end date · 4 phases · CNN · RNN · Transformer · Fine-tuning</div>
+  <div class="hero-title">Complete AI/ML Mastery Plan — <span>with Deep Learning</span></div>
+  <div class="hero-sub">Python · Math · ML · Deep Learning — day by day, topic by topic. Click any day to see exactly what to study.</div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--py)"></div><span style="color:var(--py)">Python</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--math)"></div><span style="color:var(--math)">Math</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--ml)"></div><span style="color:var(--ml)">ML</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--dl)"></div><span style="color:var(--dl)">Deep Learning</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--proj)"></div><span style="color:var(--proj)">Project</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--rev)"></div><span style="color:var(--rev)">Revision</span></div>
+  </div>
+</div>
+
+<div class="phases">
+  <button class="ph-btn on" onclick="showPhase('p1')">Phase 1 — Foundations</button>
+  <button class="ph-btn" onclick="showPhase('p2')">Phase 2 — Core ML</button>
+  <button class="ph-btn" onclick="showPhase('p3')">Phase 3 — Advanced ML</button>
+  <button class="ph-btn dl-tab" onclick="showPhase('p4')">Phase 4 — Deep Learning ✦ NEW</button>
+</div>
+
+<div class="content">
+
+<!-- ══ PHASE 1 ══ -->
+<div class="ptab on" id="tab-p1">
+  <div class="phase-title">Phase 1 — Foundations</div>
+  <div class="phase-sub">Python basics · Linear algebra · Probability · Linear Regression · 2 mini projects · No time limit</div>
+  <div class="roadmap-strip">
+    <div class="rs-seg" style="background:rgba(74,144,226,0.08)"><div class="rs-n" style="color:var(--py)">Wk 1</div><div class="rs-l">Variables · Vectors</div></div>
+    <div class="rs-seg" style="background:rgba(74,144,226,0.08)"><div class="rs-n" style="color:var(--py)">Wk 2</div><div class="rs-l">Loops · Dot Product</div></div>
+    <div class="rs-seg" style="background:rgba(74,144,226,0.06)"><div class="rs-n" style="color:var(--py)">Wk 3</div><div class="rs-l">NumPy · Matrices</div></div>
+    <div class="rs-seg" style="background:rgba(74,144,226,0.06)"><div class="rs-n" style="color:var(--py)">Wk 4</div><div class="rs-l">Pandas · Derivatives</div></div>
+    <div class="rs-seg" style="background:rgba(74,205,138,0.06)"><div class="rs-n" style="color:var(--ml)">Wk 5</div><div class="rs-l">Viz · LinReg Code</div></div>
+    <div class="rs-seg" style="background:rgba(168,85,247,0.08)"><div class="rs-n" style="color:var(--proj)">Wk 6</div><div class="rs-l">2 Mini Projects</div></div>
+  </div>
+  <div class="tip-blue"><strong>Already detailed in previous plan.</strong> Phase 1 covers: Python, NumPy, Pandas, Matplotlib, Seaborn, Vectors, Matrices, Derivatives, Probability, Linear Regression. Weeks 1–6 with full day-by-day topics. Complete this before moving to Phase 2.</div>
+
+  <!-- week 1 collapsed summary -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 1</span><span class="wtitle">Variables · Vectors · What is ML</span><span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w1-strip">
+        <div class="ws-day ws-py" onclick="showDay('w1','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w1','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w1','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w1','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w1','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w1','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w1','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w1-panel"><div class="tip-blue"><strong>Click any day above</strong> to see what to study.</div></div>
+    </div>
+  </div>
+  <div class="tip-blue" style="margin-top:8px"><strong>Weeks 2–6</strong> follow the same structure. See the previous plan version for their full day-by-day detail. Phase 1 is unchanged — complete it fully before Phase 2.</div>
+</div>
+
+<!-- ══ PHASE 2 ══ -->
+<div class="ptab" id="tab-p2">
+  <div class="phase-title">Phase 2 — Core ML</div>
+  <div class="phase-sub">Pipelines · Classification · Decision Trees · Random Forest · SQL · 1 major deployed project</div>
+  <div class="roadmap-strip">
+    <div class="rs-seg" style="background:rgba(74,205,138,0.08)"><div class="rs-n" style="color:var(--ml)">Wk 7</div><div class="rs-l">Pipelines · GD</div></div>
+    <div class="rs-seg" style="background:rgba(74,205,138,0.08)"><div class="rs-n" style="color:var(--ml)">Wk 8</div><div class="rs-l">LogReg · Metrics</div></div>
+    <div class="rs-seg" style="background:rgba(74,205,138,0.06)"><div class="rs-n" style="color:var(--ml)">Wk 9</div><div class="rs-l">Trees · Correlation</div></div>
+    <div class="rs-seg" style="background:rgba(74,205,138,0.06)"><div class="rs-n" style="color:var(--ml)">Wk 10</div><div class="rs-l">SQL · Random Forest</div></div>
+    <div class="rs-seg" style="background:rgba(168,85,247,0.08)"><div class="rs-n" style="color:var(--proj)">Wk 11</div><div class="rs-l">Major Project 1</div></div>
+  </div>
+  <div class="tip-blue"><strong>Phase 2 is fully detailed in the previous plan.</strong> Weeks 7–11 with day-by-day topics. Ends with Hyderabad Rental Estimator deployed on Streamlit.</div>
+</div>
+
+<!-- ══ PHASE 3 ══ -->
+<div class="ptab" id="tab-p3">
+  <div class="phase-title">Phase 3 — Advanced ML + Deploy</div>
+  <div class="phase-sub">XGBoost · SHAP · Bayes · PCA · K-Means · Final deployed project · No time limit</div>
+  <div class="roadmap-strip">
+    <div class="rs-seg" style="background:rgba(74,205,138,0.08)"><div class="rs-n" style="color:var(--ml)">Wk 12</div><div class="rs-l">XGBoost · SHAP</div></div>
+    <div class="rs-seg" style="background:rgba(74,205,138,0.08)"><div class="rs-n" style="color:var(--ml)">Wk 13</div><div class="rs-l">PCA · K-Means</div></div>
+    <div class="rs-seg" style="background:rgba(168,85,247,0.08)"><div class="rs-n" style="color:var(--proj)">Wk 14–15</div><div class="rs-l">Final Project</div></div>
+  </div>
+  <div class="tip-blue"><strong>Phase 3 is fully detailed in the previous plan.</strong> Ends with Student Burnout Warning System — XGBoost + SHAP + deployed Streamlit app. Complete this before starting Phase 4.</div>
+</div>
+
+<!-- ══════════════════════ PHASE 4 — DEEP LEARNING ══════════════════════ -->
+<div class="ptab" id="tab-p4">
+  <div class="phase-title">Phase 4 — Deep Learning <span class="new-badge">NEW</span></div>
+  <div class="phase-sub">Neural Networks → PyTorch → CNNs → RNNs → Transformers → Attention → Fine-tuning · No time limit · Day by day</div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">8</div><div class="stat-l">Weeks (min)</div></div>
+    <div class="stat"><div class="stat-n">5</div><div class="stat-l">Topics</div></div>
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Projects</div></div>
+    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Time limit</div></div>
+  </div>
+
+  <div class="roadmap-strip">
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 16</div><div class="rs-l">NN Theory + NumPy</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 17</div><div class="rs-l">PyTorch Basics</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 18</div><div class="rs-l">CNNs</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 19</div><div class="rs-l">RNNs + LSTM</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 20</div><div class="rs-l">Transformers</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 21</div><div class="rs-l">Attention + BERT</div></div>
+    <div class="rs-seg" style="background:rgba(244,114,182,0.08)"><div class="rs-n" style="color:var(--dl)">Wk 22</div><div class="rs-l">Fine-tuning</div></div>
+    <div class="rs-seg" style="background:rgba(168,85,247,0.08)"><div class="rs-n" style="color:var(--proj)">Wk 23–24</div><div class="rs-l">Final DL Project</div></div>
+  </div>
+
+  <!-- WEEK 16 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 16</span>
+      <span class="wtitle">Neural Networks from scratch — the foundation of everything</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w16-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w16','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">NN Theory</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w16','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w16','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">NN Code</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w16','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w16','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">Backprop</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w16','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w16','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w16-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 17 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 17</span>
+      <span class="wtitle">PyTorch — the industry standard deep learning framework</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w17-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w17','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">Tensors</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w17','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w17','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">nn.Module</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w17','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w17','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">Training Loop</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w17','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w17','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w17-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 18 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 18</span>
+      <span class="wtitle">CNNs — Convolutional Neural Networks for images</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w18-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w18','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">Conv Theory</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w18','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w18','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">CNN Code</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w18','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--dl)">Transfer</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w18','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w18','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w18','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w18-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 19 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 19</span>
+      <span class="wtitle">RNNs + LSTMs — neural networks that understand sequences</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w19-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w19','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">RNN Theory</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w19','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w19','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">LSTM</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w19','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--dl)">RNN Code</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w19','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">GRU + Text</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w19','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w19','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w19-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 20 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 20</span>
+      <span class="wtitle">Transformers — the architecture that runs modern AI</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w20-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w20','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">Why Transformers</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w20','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w20','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">Encoder</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w20','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--dl)">Decoder</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w20','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">Build GPT</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w20','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w20','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w20-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 21 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 21</span>
+      <span class="wtitle">Attention mechanism + BERT — deep understanding</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w21-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w21','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">Attention</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w21','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w21','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">Multi-Head</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w21','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--dl)">BERT</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w21','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">HuggingFace</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w21','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w21','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w21-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 22 -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum dl">Week 22</span>
+      <span class="wtitle">Fine-tuning — make any LLM work for your specific task</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w22-strip">
+        <div class="ws-day ws-dl" onclick="showDay('w22','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--dl)">What is FT</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w22','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--dl)">Datasets</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w22','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--dl)">Fine-tune</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w22','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--dl)">LoRA / PEFT</div></div>
+        <div class="ws-day ws-dl" onclick="showDay('w22','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--dl)">Evaluate FT</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w22','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w22','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w22-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to study.</div></div>
+    </div>
+  </div>
+
+  <!-- WEEK 23-24 FINAL DL PROJECT -->
+  <div class="wcard dl-card">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum proj">Week 23–24</span>
+      <span class="wtitle">Final Deep Learning Project — Telugu Fake News Detector</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w23-strip">
+        <div class="ws-day ws-proj" onclick="showDay('w23','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--proj)">Data</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w23','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--proj)">Preprocess</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w23','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--proj)">Fine-tune</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w23','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--proj)">Evaluate</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w23','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--proj)">App</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w23','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--proj)">Deploy</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w23','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Celebrate</div></div>
+      </div>
+      <div class="day-panel" id="w23-panel"><div class="tip"><strong>Click any day above</strong> to see exactly what to build that day.</div></div>
+    </div>
+  </div>
+
+</div><!-- end phase 4 -->
+</div><!-- end content -->
+
+<script>
+const days = {
+  // PHASE 1 WEEK 1 sample
+  w1:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Install + first programs',items:['Install Python 3.11+ and VS Code','Variables: name, age, gpa, is_student','Arithmetic, string formatting with f-strings','Write 5 small programs: calculator, grade checker, even/odd'],res:'📎 CS50P edX Week 0 — free audit',check:'your grade calculator runs correctly from memory.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Vectors — direction and magnitude',items:['Scalar = just a number. Vector = number with direction.','Draw vectors on paper as arrows','Vector addition: head-to-tail method','Scalar multiplication: stretch or shrink the arrow','Draw 10 examples by hand'],res:'📎 3Blue1Brown Essence of Linear Algebra Ch.1 — YouTube',check:'you can explain a vector to someone with zero math background.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'if/else + data types',items:['if / elif / else conditions','int vs float vs string vs bool','Type conversion: int(), str(), float()','input() — take values from user','Build grade calculator with user input'],res:'📎 CS50P Week 1',check:'grade calculator handles all mark ranges correctly.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Vectors in Python',items:['Represent vector as list: v = [3, 4]','Write add_vectors(v1, v2) function','Write scale_vector(v, s) function','Compute dot product manually: sum of element products','Test: [1,2]·[3,4] = 11'],res:'📎 Khan Academy Vectors intro',check:'your Python vector functions all return correct results.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'What is Machine Learning?',items:['Traditional: you write rules. ML: algorithm finds rules from examples.','Supervised / Unsupervised / Reinforcement — 3 types','Real examples: Gmail spam, YouTube, Translate, Swiggy ETA','Watch: 3Blue1Brown "But what is a neural network?" — 19 min','Write 3 sentences explaining ML in your own words'],res:'📎 Google ML Crash Course — Intro section (free)',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Revision',topic:'Week 1 full review',items:['Rewrite grade calculator from scratch — no peeking','Draw 5 vectors, add 3 pairs by hand','Write vector functions again from memory','Explain ML types out loud — 2 minutes total'],res:'',check:'you can write calculator + vector functions from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'No studying today',items:['Rest completely. Brain consolidates during rest.','Optional: 15 min re-read your notebook notes only'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 16 — Neural Networks ══
+  w16:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 Deep Learning — Monday',topic:'What is a Neural Network — theory first',items:['A neural network is loosely inspired by the human brain — layers of connected nodes','Input layer → Hidden layers → Output layer','Each connection has a weight. Each node has a bias.','Forward pass: input × weight + bias → activation function → output','Activation functions: why we need non-linearity. Without it, stacking layers does nothing.','Sigmoid: σ(x)=1/(1+e^-x). ReLU: max(0,x). Tanh: (e^x-e^-x)/(e^x+e^-x)','ReLU is most common today. It solves vanishing gradient. Draw all 3 activation functions by hand.','Watch: 3Blue1Brown "Neural Networks" episode 1 — Chapter 1 (19 min)'],res:'📎 3Blue1Brown "But what is a Neural Network?" — YouTube. Pause after each section.',check:'you can draw a 3-layer neural network, label every weight and bias, and explain what each activation function does.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'The math inside a neural network',items:['Forward pass as matrix multiplication: output = Activation(W·x + b)','W = weight matrix, x = input vector, b = bias vector','For a layer with 3 inputs and 4 neurons: W is (4×3), x is (3×1), output is (4×1)','Do this by hand: design a 2-input, 3-hidden, 1-output network. Compute one forward pass manually.','Loss function: MSE for regression, Cross-entropy for classification','Loss measures how wrong the output is. Goal: minimize loss.','Backpropagation is just the chain rule applied backward through all layers'],res:'📎 3Blue1Brown "Gradient Descent, Neural Networks" — YouTube Chapter 2',check:'you can compute one forward pass manually through a small network with real numbers.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 Deep Learning — Wednesday',topic:'Build a neural network from scratch using NumPy',items:['No PyTorch today — use only NumPy. This forces real understanding.','Define: weights W1 (hidden), W2 (output). Biases b1, b2.','Initialize: np.random.randn(hidden_size, input_size) × 0.01','Forward pass: Z1=W1@X+b1, A1=ReLU(Z1), Z2=W2@A1+b2, A2=sigmoid(Z2)','Compute loss: cross-entropy = -np.mean(y*np.log(A2+1e-8))','This is your first neural net. It has no training yet — just forward pass.','Test: pass some random inputs through. Print the output shape.'],res:'📎 Andrej Karpathy "micrograd" tutorial — YouTube (builds autograd from scratch)',check:'your NumPy network runs a forward pass and outputs the correct shape without errors.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Backpropagation — the chain rule in action',items:['Backprop computes how much each weight contributed to the loss','dL/dW2 = dL/dA2 × dA2/dZ2 × dZ2/dW2 — chain rule all the way back','For cross-entropy + sigmoid: dL/dZ2 = A2 - y (simple!)','For ReLU: dReLU/dZ = 1 if Z>0, else 0','dL/dW1 = (W2.T @ dZ2) × ReLU_derivative(Z1) @ X.T','Vanishing gradient: sigmoid saturates → gradient becomes ~0 → early layers stop learning → reason ReLU was invented','Do the math on paper for a 2-layer network with 2 inputs and 1 output — step by step'],res:'📎 3Blue1Brown "Backpropagation" — YouTube Chapters 3+4',check:'you can derive gradients for W2 and W1 by hand and explain vanishing gradient using sigmoid.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 Deep Learning — Friday',topic:'Add backprop + training loop to your NumPy network',items:['Add backward pass to your NumPy network from Wednesday','dZ2 = A2 - y','dW2 = dZ2 @ A1.T / m; db2 = np.sum(dZ2)/m','dA1 = W2.T @ dZ2; dZ1 = dA1 * relu_derivative(Z1)','dW1 = dZ1 @ X.T / m; db1 = np.sum(dZ1)/m','Update: W -= learning_rate * dW; b -= learning_rate * db','Training loop: for epoch in range(1000): forward → loss → backward → update','Plot loss vs epoch — it should go DOWN. If not, debug learning rate.'],res:'📎 Karpathy "Neural Networks: Zero to Hero" Lecture 1 — YouTube',check:'your NumPy network trains and loss decreases over 1000 epochs on a simple classification task.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 16 Revision',topic:'Neural network foundations — full review',items:['Draw a complete 2-layer neural network from scratch — all weights, biases, activations labeled','Write the forward pass equations on paper. No looking.','Explain backpropagation using the chain rule analogy — "error ripples backward"','Code: rebuild the NumPy network from scratch in a clean new file'],res:'',check:'you can rebuild the full NumPy neural network from scratch and explain every line.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day — Week 16 was dense',items:['Complete rest. Neural networks are hard — your brain needs this.','Tomorrow you start PyTorch — the professional framework.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 17 — PyTorch ══
+  w17:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 PyTorch — Monday',topic:'Tensors — PyTorch\'s fundamental data structure',items:['import torch','Tensor = multi-dimensional array, like NumPy array but GPU-capable and autodiff-ready','torch.tensor([1,2,3]), torch.zeros(3,3), torch.ones(2,4), torch.randn(3,3)','Tensor properties: .shape, .dtype, .device','Arithmetic: same as NumPy — +, -, *, /, @','Moving to GPU: tensor.to("cuda") if torch.cuda.is_available() else tensor (use Google Colab for GPU)','torch.from_numpy(arr) — convert NumPy to PyTorch. tensor.numpy() — back to NumPy'],res:'📎 PyTorch official "60-minute blitz" tutorial — pytorch.org',check:'you can create tensors, perform operations, and understand why tensors are different from plain NumPy arrays.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Autograd — automatic differentiation',items:['Autograd is the magic behind deep learning. You define the computation, PyTorch computes all gradients automatically.','tensor.requires_grad = True — tells PyTorch to track this variable','x = torch.tensor(3.0, requires_grad=True)','y = x**2 + 2*x + 1 — y = 16 when x=3','y.backward() — runs backpropagation automatically','x.grad — gives dy/dx = 2x+2 = 8 at x=3. Verify by hand.','This replaces your entire manual backprop from Week 16. PyTorch does it for you.'],res:'📎 PyTorch autograd tutorial — pytorch.org/tutorials',check:'you can compute gradients using autograd and verify they match your hand calculations.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 PyTorch — Wednesday',topic:'nn.Module — define neural networks cleanly',items:['import torch.nn as nn','class MyNetwork(nn.Module): defines your model as a Python class','def __init__(self): super().__init__(); self.fc1=nn.Linear(in,hidden); self.fc2=nn.Linear(hidden,out)','nn.Linear: fully connected layer. Automatically initializes weights and biases.','def forward(self, x): x=torch.relu(self.fc1(x)); x=torch.sigmoid(self.fc2(x)); return x','model = MyNetwork(); print(model) — see all layers','model.parameters() — all learnable weights. model.state_dict() — current values.'],res:'📎 PyTorch nn.Module tutorial — pytorch.org',check:'you can define a 2-layer network using nn.Module and print all its parameters.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Optimizers + Loss functions in PyTorch',items:['torch.optim.SGD(model.parameters(), lr=0.01) — gradient descent','torch.optim.Adam(model.parameters(), lr=0.001) — adaptive learning rate (use this by default)','Adam: adjusts learning rate per parameter. Momentum + RMSprop combined. Almost always better than SGD.','nn.BCELoss() — binary cross-entropy. nn.CrossEntropyLoss() — multi-class. nn.MSELoss() — regression.','Training step always: optimizer.zero_grad() → forward → loss → loss.backward() → optimizer.step()','Why zero_grad()? PyTorch accumulates gradients by default. Reset before each batch.'],res:'📎 PyTorch optim tutorial',check:'you can explain Adam optimizer vs SGD and write the 4-step training cycle from memory.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🧠 PyTorch — Friday',topic:'Complete training loop on real data',items:['Dataset: use torch.utils.data.TensorDataset and DataLoader','DataLoader(dataset, batch_size=32, shuffle=True) — feeds mini-batches to your model','Complete training loop with validation:','for epoch in range(100): model.train(); for X_batch,y_batch in loader: forward→loss→backward→step','Validation: model.eval(); with torch.no_grad(): forward→compute val loss (no gradient tracking)','Plot: training loss vs validation loss per epoch — this tells you if overfitting','Save model: torch.save(model.state_dict(), "model.pth"). Load: model.load_state_dict(torch.load("model.pth"))','Train on Iris dataset or any simple classification task'],res:'📎 PyTorch "Training a Classifier" tutorial',check:'your PyTorch model trains for 100 epochs, plots loss curves, and saves correctly.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 17 Revision',topic:'PyTorch complete review',items:['From scratch: define a network, train it on Iris, plot loss curves, save model — no notes','Compare: your NumPy network from Week 16 vs the PyTorch version. Same logic, different syntax.','Explain: what does optimizer.zero_grad() do and why does it matter?','Teach back: walk through the 4-step training loop and explain each line'],res:'',check:'you can build, train, evaluate, and save a PyTorch model completely from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest today. CNNs start tomorrow — bring full energy.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 18 — CNNs ══
+  w18:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🖼️ CNN — Monday',topic:'Convolutional Neural Networks — how do they see?',items:['Problem with plain neural networks on images: a 224×224 image = 150,528 inputs. Too many weights.','CNN solution: share weights across the image using a sliding filter (kernel)','Convolution: slide a small filter (e.g. 3×3) across the image. At each position: multiply element-wise, sum result.','This detects local patterns: edges, curves, textures','Feature map: the output of applying one filter across the entire image','Multiple filters → multiple feature maps → each detects a different pattern','Pooling: reduce feature map size. MaxPool: take the maximum value in each 2×2 region','Watch: 3Blue1Brown "Convolution" visual. Then Andrej Karpathy CNN lecture.'],res:'📎 3Blue1Brown Convolution video · CS231n Stanford lecture notes (free)',check:'you can explain convolution using the "sliding window" analogy and draw a feature map by hand.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Convolution math + receptive field',items:['Convolution output size formula: (input_size - kernel_size + 2×padding) / stride + 1','Example: 32×32 input, 3×3 kernel, stride=1, padding=0 → output = 30×30','Padding: add zeros around the border to preserve spatial size. "same" padding → output = input size.','Stride: how many pixels the filter jumps each step. Stride=2 → halves spatial size.','Receptive field: which part of the original image does a neuron "see"? Grows with depth.','Deeper layers see larger patterns: early layers → edges, middle → shapes, deep → objects','Parameter count: (kernel_h × kernel_w × in_channels + 1) × out_channels — much less than fully connected'],res:'📎 CS231n Notes on CNNs — cs231n.github.io (free)',check:'given filter size, stride, padding, you can compute output dimensions and parameter count without a calculator.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🖼️ CNN — Wednesday',topic:'Build a CNN in PyTorch + train on CIFAR-10',items:['Use Google Colab — needs GPU for CNN training','import torchvision; train_data = torchvision.datasets.CIFAR10(root=".", train=True, download=True)','DataLoader with batch_size=64, shuffle=True','Build CNN: nn.Conv2d(3,32,3,padding=1) → ReLU → MaxPool(2) → Conv2d(32,64,3,padding=1) → ReLU → MaxPool(2) → Flatten → Linear(64×8×8, 512) → ReLU → Linear(512, 10)','Train for 10 epochs. Track training + validation accuracy.','Plot: accuracy curve per epoch. What accuracy do you reach?','Print: model parameters count using sum(p.numel() for p in model.parameters())'],res:'📎 PyTorch CIFAR-10 tutorial — pytorch.org',check:'your CNN trains on CIFAR-10 and reaches above 70% validation accuracy within 10 epochs.'}]},
+    thu:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🖼️ CNN — Thursday',topic:'Transfer learning — stand on the shoulders of giants',items:['Transfer learning: take a model already trained on millions of images. Use its learned features for your task.','Pretrained models: ResNet18, VGG16, EfficientNet — trained on ImageNet (1.2M images, 1000 classes)','Why it works: early layers learn universal features (edges, textures) regardless of task','from torchvision import models; resnet = models.resnet18(pretrained=True)','Freeze base layers: for param in resnet.parameters(): param.requires_grad = False','Replace final layer: resnet.fc = nn.Linear(512, num_your_classes)','Now only the final layer trains. Much faster. Much better results on small datasets.','Train on your own small dataset (50-200 images per class) and beat your CNN from scratch'],res:'📎 PyTorch Transfer Learning tutorial — pytorch.org/tutorials',check:'you can load ResNet18, freeze its base, replace the classifier, and fine-tune it on a custom dataset.'}]},
+    fri:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 CNN Mini Project — Friday',topic:'Fruit Freshness Classifier',items:['Problem: classify fruit images as fresh or rotten (2 classes × 3 fruits = 6 classes)','Dataset: Kaggle "Fruits fresh and rotten" dataset (free download)','Use transfer learning: ResNet18 pretrained → replace final layer → train 10 epochs','Data augmentation: RandomHorizontalFlip, RandomRotation(15), ColorJitter — prevents overfitting on small data','from torchvision import transforms','Evaluate: confusion matrix per class. Which fruit is hardest to classify?','Deploy: wrap in Streamlit app. User uploads image → model predicts freshness.'],res:'📎 Kaggle "Fruits fresh and rotten for classification" dataset',check:'your fruit classifier reaches 85%+ validation accuracy and the Streamlit app works with real uploaded images.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — CNN Week Revision',topic:'Convolution + transfer learning review',items:['Math: compute output size for 3 different Conv2d configurations','Code: rebuild your CNN from scratch without notes. Train for 5 epochs.','Transfer learning: explain why freezing base layers makes sense — what would happen if you trained all layers on a tiny dataset?','Draw: what happens to feature maps at each layer of a deep CNN'],res:'',check:'you can compute conv output dimensions and train a transfer learning model completely from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest. RNNs start Monday — a completely different paradigm from CNNs.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 19 — RNNs ══
+  w19:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔄 RNN — Monday',topic:'Recurrent Neural Networks — memory in networks',items:['Problem with plain NNs on sequences: they treat each input independently. No memory.','Example: "The cat sat on the mat" — to predict the next word, you need to remember "cat sat on"','RNN solution: a hidden state that carries information from previous steps','RNN formula: h_t = tanh(W_h × h_{t-1} + W_x × x_t + b)','h_t = current hidden state. h_{t-1} = previous hidden state (memory). x_t = current input.','Output: y_t = W_y × h_t + b_y','Many-to-one: read a whole sentence → classify it (sentiment analysis)','One-to-many: input one seed word → generate a whole story','Many-to-many: translate English → Telugu word by word'],res:'📎 Andrej Karpathy "The Unreasonable Effectiveness of RNNs" blog post (classic read)',check:'you can draw an RNN unrolled through 3 time steps, labeling all weights and hidden states.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Vanishing gradient in RNNs + BPTT',items:['Backpropagation Through Time (BPTT): unroll the RNN for T steps, then backprop through all of them','Problem: for long sequences, gradient gets multiplied by the same W_h repeatedly','If |W_h| < 1: gradient → 0 after many steps (vanishing). Network forgets early inputs.','If |W_h| > 1: gradient → ∞ (exploding). Training becomes unstable.','Vanishing gradient is why plain RNNs fail on long sequences (>20-30 steps)','Solution: LSTM and GRU — designed specifically to solve this problem','Gradient clipping: cap gradient norm at a maximum value to prevent exploding gradients'],res:'📎 Colah\'s blog "Understanding LSTMs" — colah.github.io (the best LSTM explanation anywhere)',check:'you can explain vanishing gradient using the "repeated multiplication" analogy and know why it breaks plain RNNs.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔄 LSTM — Wednesday',topic:'LSTM — Long Short-Term Memory networks',items:['LSTM has 4 gates that control what information to remember or forget','Forget gate: decides what to throw away from cell state: f_t = σ(W_f·[h_{t-1},x_t] + b_f)','Input gate: decides what new info to add: i_t = σ(...); C̃_t = tanh(...)','Cell state update: C_t = f_t × C_{t-1} + i_t × C̃_t (the "memory highway")','Output gate: what to output based on cell state: o_t = σ(...); h_t = o_t × tanh(C_t)','Key insight: the cell state C_t flows through with only gentle modifications → gradients can flow uninterrupted','nn.LSTM(input_size, hidden_size, num_layers, batch_first=True) in PyTorch'],res:'📎 Colah\'s blog "Understanding LSTMs" — absolutely must read. Draw every gate.',check:'you can draw the LSTM cell with all 4 gates and explain why the cell state prevents vanishing gradient.'}]},
+    thu:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔄 RNN/LSTM Code — Thursday',topic:'Train an LSTM on text data in PyTorch',items:['Task: sentiment analysis on movie reviews (IMDB dataset)','from torchtext.datasets import IMDB (or use HuggingFace datasets)','Tokenize text: split into words. Build vocabulary: word → integer index.','Embedding layer: nn.Embedding(vocab_size, embed_dim) — converts word indices to dense vectors','Full model: Embedding → LSTM → take last hidden state → Linear → sigmoid','class SentimentLSTM(nn.Module): defines the full pipeline','Train 5 epochs. What validation accuracy do you reach?','GRU alternative: nn.GRU — fewer parameters than LSTM, often similar performance'],res:'📎 PyTorch text classification tutorial · HuggingFace datasets library',check:'your LSTM trains on IMDB and reaches 85%+ accuracy within 5 epochs.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔄 RNN — Friday',topic:'GRU + sequence-to-sequence intuition',items:['GRU (Gated Recurrent Unit): simplified LSTM with 2 gates instead of 4. Faster training.','Reset gate: how much of past hidden state to use. Update gate: how much to update.','h_t = (1 - z_t) × h_{t-1} + z_t × h̃_t — simple and elegant','When to use LSTM vs GRU: LSTM for very long sequences, GRU for shorter ones or when speed matters','Sequence-to-sequence (Seq2Seq): encoder RNN reads input → decoder RNN generates output','Used in: translation, summarization, text generation','Bottleneck problem: entire input compressed into one fixed vector → information lost for long sequences','This bottleneck is exactly why ATTENTION was invented — the topic of Week 21'],res:'📎 Seq2Seq paper "Sequence to Sequence Learning with Neural Networks" — high-level reading',check:'you can explain GRU vs LSTM trade-offs and describe the seq2seq bottleneck problem.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — RNN/LSTM Revision',topic:'Sequence models full review',items:['Draw: RNN cell unrolled for 4 time steps. Label every weight.','Draw: LSTM cell with all 4 gates. Explain each gate in 1 sentence.','Code: train LSTM sentiment classifier from scratch — no notes','Teach back: explain vanishing gradient → LSTM solution → GRU shortcut — as one connected story'],res:'',check:'you can draw, code, and explain RNN/LSTM/GRU from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest completely. Transformers are the hardest and most important week. Come in fresh.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 20 — Transformers ══
+  w20:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'⚡ Transformer — Monday',topic:'Why Transformers replaced RNNs',items:['RNN problems: 1) Sequential computation — can\'t parallelize. 2) Bottleneck — long-range dependencies forgotten.','Transformer solution (2017 "Attention Is All You Need" paper): no recurrence at all. Pure attention.','Key insight: instead of passing a single hidden vector, let every token attend directly to every other token','Parallelizable: all tokens processed simultaneously → training is much faster on GPUs','"Attention Is All You Need" paper — the most impactful ML paper in the last decade','Result: GPT, BERT, T5, ChatGPT, Claude — all Transformers','Architecture: Input → Tokenization → Embeddings + Positional Encoding → Encoder/Decoder blocks → Output','Read the original paper abstract. Watch Andrej Karpathy\'s transformer walkthrough.'],res:'📎 "Attention Is All You Need" paper (2017) abstract · Andrej Karpathy "Let\'s build GPT" — YouTube',check:'you can explain in 3 sentences why Transformers are better than RNNs for long sequences.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Self-attention — the mathematical heart',items:['For each word, create 3 vectors: Query (Q), Key (K), Value (V)','Q, K, V = input × W_Q, input × W_K, input × W_V (learned weight matrices)','Attention score: score(Q_i, K_j) = Q_i · K_j — how relevant is word j to word i?','Scale: divide by √d_k to prevent very large dot products that would saturate softmax','Softmax over all scores → attention weights (sum to 1)','Weighted sum of Values: output = Σ(attention_weight_j × V_j)','Do this by hand for a 3-word sentence with d_k=2. Tiny numbers, but the full computation.','This is the entire self-attention operation. Everything else in a Transformer is built on this.'],res:'📎 "The Illustrated Transformer" by Jay Alammar — jalammar.github.io (must read)',check:'you can compute self-attention by hand for a 3-token sequence with small dimensions.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'⚡ Transformer — Wednesday',topic:'Encoder architecture — BERT\'s structure',items:['Encoder block = Multi-Head Attention + Feed Forward Network + Layer Norm + Residual connections','Multi-head attention: run attention h times in parallel with different W_Q, W_K, W_V','Different heads learn different relationships: one head learns syntax, another learns semantics','Concatenate all head outputs → linear projection → final output','Feed forward: two linear layers with ReLU in between. Applied independently to each position.','Residual connections: output = LayerNorm(x + Sublayer(x)). Prevents vanishing gradient.','Positional encoding: add sinusoidal values to embeddings so model knows word order (Transformers have no inherent order)'],res:'📎 Jay Alammar "The Illustrated Transformer" — jalammar.github.io',check:'you can draw one encoder block with all components labeled and explain why residual connections matter.'}]},
+    thu:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'⚡ Transformer — Thursday',topic:'Decoder architecture — GPT\'s structure',items:['Decoder has masked self-attention: can only attend to past tokens (prevents cheating during training)','Cross-attention: decoder attends to encoder output — this is how translation works (decoder looks at source sentence)','GPT-style (decoder-only): no encoder, no cross-attention. Just masked self-attention + FFN.','GPT predicts the next token autoregressively: P(token_t | token_1, ..., token_{t-1})','Training: given "The cat sat on the", predict "mat". Given "The cat sat on", predict "the". Etc.','Inference: sample tokens one at a time, feeding each back as input','Temperature: controls randomness. High temp = creative but incoherent. Low temp = focused but repetitive.'],res:'📎 Andrej Karpathy "Let\'s build GPT from scratch" — YouTube (2 hours, essential)',check:'you can explain the difference between BERT (encoder-only) and GPT (decoder-only) and when to use each.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'⚡ Transformer — Friday',topic:'Build a mini-GPT character-level language model',items:['Follow Andrej Karpathy\'s "Let\'s build GPT" tutorial — this is the best DL tutorial ever made','Dataset: Shakespeare text (tiny.shakespeare.txt — 1MB)','Tokenize at character level: each character is a token (vocabulary of ~65 chars)','Build: Token Embedding + Positional Embedding → N × (MultiHeadAttention + FFN) → Linear → softmax','Train on Google Colab (free GPU). Start small: n_layers=4, n_heads=4, n_embd=128.','After training: generate text. It will write Shakespeare-like text.','This is your own GPT. From scratch. In PyTorch.'],res:'📎 Karpathy "Let\'s build GPT from scratch" — YouTube (the single most important DL video to watch)',check:'your mini-GPT trains and generates semi-coherent Shakespeare-like text after training.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Transformer Revision',topic:'Full Transformer architecture review',items:['Draw: complete Transformer encoder block with all components and equations','Math: compute self-attention for a 2-token sequence with d_k=3 by hand','Explain: why multi-head attention? What does each head learn?','Explain: masked attention in GPT vs full attention in BERT — when does each make sense?'],res:'',check:'you can draw, compute, and explain self-attention, encoder, and decoder from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest. You just learned the architecture that runs ChatGPT and Claude. That\'s massive.','Next week: attention mechanism deeper + BERT in code.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 21 — Attention + BERT ══
+  w21:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🎯 Attention — Monday',topic:'Attention mechanism — deep understanding',items:['Revisit: Q×K^T/√d_k → softmax → ×V','Visualize attention: for each output token, which input tokens does it attend to most?','Example: "The animal didn\'t cross the street because IT was too tired" — what does IT attend to?','Self-attention correctly identifies: IT → animal (not street)','This is something RNNs could not reliably do','Positional encoding: Transformer has no inherent sequence order — must add it explicitly','PE(pos, 2i) = sin(pos/10000^(2i/d_model)) — different frequency sine waves per dimension','Each position gets a unique vector. Nearby positions have similar encodings.'],res:'📎 "The Illustrated Self-Attention" by Jay Alammar — jalammar.github.io',check:'you can explain attention using the IT→animal example and compute PE values for positions 0 and 1.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Attention math: scaled dot-product + multi-head',items:['Attention(Q,K,V) = softmax(QK^T/√d_k)V — the full formula','Why √d_k? For large d_k, dot products become large → softmax saturates → gradient ≈ 0','Multi-head: split d_model into h heads each of d_k = d_model/h dimensions','Compute h separate attentions in parallel → concatenate → project with W_O','If d_model=512, h=8: each head has d_k=d_q=d_v=64','Why multi-head? Each head can attend to different aspects (syntax, coreference, semantics)','Total parameters in one multi-head attention layer: 4 × d_model × d_model (W_Q, W_K, W_V, W_O)'],res:'📎 Attention Is All You Need paper — equations 1 and 2',check:'you can derive the full multi-head attention parameter count for d_model=512, h=8 by hand.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🎯 BERT — Wednesday',topic:'BERT — Bidirectional Encoder Representations from Transformers',items:['BERT = encoder-only Transformer pretrained on massive text (Wikipedia + BookCorpus)','Bidirectional: attends to ALL surrounding context simultaneously (GPT attends only left context)','Pretraining task 1 — MLM (Masked Language Model): mask 15% of tokens → predict them','Pretraining task 2 — NSP (Next Sentence Prediction): given 2 sentences → predict if consecutive','[CLS] token: special token at start. Its final embedding represents the whole sequence → used for classification.','[SEP] token: separates two sentences in pair tasks','BERT output: for each input token, a contextual embedding vector — same word → different vector depending on context'],res:'📎 Jay Alammar "The Illustrated BERT" — jalammar.github.io (must read before coding)',check:'you can explain MLM pretraining, CLS token, and why BERT is bidirectional vs GPT\'s left-to-right.'}]},
+    thu:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🎯 BERT — Thursday',topic:'HuggingFace Transformers — use pretrained models in 10 lines',items:['pip install transformers datasets','from transformers import AutoTokenizer, AutoModelForSequenceClassification','tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")','model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=2)','tokens = tokenizer("I loved this movie!", return_tensors="pt", truncation=True, padding=True)','outputs = model(**tokens) — logits for each class','Understand: tokenizer converts text to input_ids, attention_mask, token_type_ids','from transformers import pipeline; classifier = pipeline("sentiment-analysis") — 3 lines to classify!'],res:'📎 HuggingFace "Quick Tour" — huggingface.co/docs/transformers',check:'you can load any HuggingFace model, tokenize text, and get predictions in under 10 lines.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🎯 HuggingFace — Friday',topic:'HuggingFace ecosystem — datasets, hub, pipeline',items:['from datasets import load_dataset; dataset = load_dataset("imdb") — thousands of datasets ready','dataset["train"][0] — inspect one sample. dataset.features — see schema.','Tokenize entire dataset: dataset.map(tokenize_function, batched=True)','from transformers import Trainer, TrainingArguments — high-level training API','TrainingArguments: num_train_epochs=3, per_device_train_batch_size=16, eval_strategy="epoch"','Trainer(model, args, train_dataset, eval_dataset, compute_metrics) — handles everything','trainer.train() — fine-tune BERT on your data in 3 lines of high-level code','HuggingFace Hub: upload your model with model.push_to_hub("your-model-name")'],res:'📎 HuggingFace "Fine-tuning a pretrained model" tutorial — huggingface.co/docs/transformers',check:'you can fine-tune BERT on a custom dataset using HuggingFace Trainer and push the model to the Hub.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Attention + BERT Revision',topic:'Full review of attention and BERT',items:['Math: compute multi-head attention output shape for d_model=256, h=4, seq_len=10','Code: load BERT, tokenize a batch of 5 sentences, inspect output shapes of last_hidden_state and pooler_output','Explain: MLM pretraining — why is it powerful? Why is bidirectionality important?','Compare: BERT vs GPT — table with: architecture, training objective, best use case, speed'],res:'',check:'you can use HuggingFace to load, tokenize, and run BERT inference completely from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest. Fine-tuning is the most practical and career-relevant week. Come in ready.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 22 — Fine-tuning ══
+  w22:{
+    mon:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔧 Fine-tuning — Monday',topic:'What is fine-tuning and why it matters for your career',items:['Pretrained model: trained by Google/Meta/OpenAI on billions of tokens. Cost: millions of dollars.','Fine-tuning: take that pretrained model. Train it on YOUR data for YOUR specific task.','Cost: a few hours on a free GPU. Result: near state-of-the-art performance on your problem.','Why it works: pretrained model already understands language deeply. You\'re just teaching it your domain.','3 fine-tuning strategies:','1. Full fine-tuning: update all parameters. Best results, most GPU memory.','2. Feature extraction: freeze base, train only classifier head. Fast, less data needed.','3. LoRA/PEFT: inject small trainable matrices, freeze base. Very efficient. Used for LLMs.','For most B.Tech projects: strategy 2 or 3 is perfect.'],res:'📎 HuggingFace "Fine-tuning" course chapter — huggingface.co/learn',check:'you can explain all 3 fine-tuning strategies and choose the right one for a given problem.'}]},
+    tue:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔧 Fine-tuning — Tuesday',topic:'Prepare your dataset for fine-tuning',items:['Fine-tuning requires: (text, label) pairs in HuggingFace Dataset format','from datasets import Dataset; ds = Dataset.from_pandas(df)','Tokenizer must match your pretrained model — always use AutoTokenizer.from_pretrained("same-model")','Tokenize: def tokenize(batch): return tokenizer(batch["text"], truncation=True, max_length=128)','ds = ds.map(tokenize, batched=True)','ds = ds.train_test_split(test_size=0.2)','For regression: use AutoModelForSequenceClassification with num_labels=1 and MSE loss','For multi-class: num_labels = number of classes. Labels must be 0 to num_labels-1.'],res:'📎 HuggingFace Tokenizers documentation',check:'you can convert a pandas DataFrame to a HuggingFace Dataset, tokenize it, and split it correctly.'}]},
+    wed:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔧 Fine-tuning — Wednesday',topic:'Fine-tune BERT for text classification on custom data',items:['Use Google Colab with T4 GPU (free)','Model: "distilbert-base-uncased" — smaller, faster, 97% of BERT performance','from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer','TrainingArguments: output_dir="./results", num_train_epochs=3, per_device_train_batch_size=16','learning_rate=2e-5 (always use a small learning rate for fine-tuning — don\'t destroy pretrained weights)','def compute_metrics(eval_pred): logits, labels = eval_pred; return {"accuracy": accuracy}','trainer = Trainer(model, args, train_dataset, eval_dataset, compute_metrics)','trainer.train() → evaluates after each epoch → saves best model'],res:'📎 HuggingFace "Fine-tuning a text classifier" tutorial',check:'your fine-tuned DistilBERT reaches 90%+ accuracy on the validation set within 3 epochs.'}]},
+    thu:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔧 LoRA / PEFT — Thursday',topic:'LoRA — fine-tune billion-parameter models efficiently',items:['Problem: full fine-tuning of a 7B parameter model needs 28GB+ GPU memory. Impossible on free hardware.','LoRA (Low-Rank Adaptation): instead of updating W (d×d), add two small matrices A (d×r) and B (r×d) where r << d','Only A and B are trained. W stays frozen. Memory reduction: ~10-100x.','r (rank): lower = fewer parameters = less memory but less capacity. r=8 or r=16 is typical.','pip install peft','from peft import LoraConfig, get_peft_model, TaskType','config = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj","v_proj"], task_type=TaskType.SEQ_CLS)','model = get_peft_model(base_model, config); model.print_trainable_parameters()'],res:'📎 HuggingFace PEFT documentation — huggingface.co/docs/peft',check:'you can apply LoRA to a pretrained model, print trainable parameter count, and explain why it\'s memory-efficient.'}]},
+    fri:{badge:'Deep Learning',cls:'dp-dl',blocks:[{cls:'tb-dl',tag:'🔧 Fine-tuning — Friday',topic:'Evaluate + save + push fine-tuned model to HuggingFace Hub',items:['trainer.evaluate() — final metrics on test set','Classification report: precision, recall, F1 per class — from sklearn.metrics import classification_report','Confusion matrix heatmap for your fine-tuned model — which classes does it confuse?','Save: trainer.save_model("./my-finetuned-bert")','Load back: model = AutoModelForSequenceClassification.from_pretrained("./my-finetuned-bert")','Push to HuggingFace Hub (free): trainer.push_to_hub("your-username/my-model-name")','Your model now has a public URL at huggingface.co/your-username/my-model-name','Anyone in the world can load and use your model with 2 lines of Python'],res:'📎 HuggingFace Hub documentation — huggingface.co/docs/hub',check:'your fine-tuned model is pushed to HuggingFace Hub and accessible via its public URL.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Fine-tuning Week Revision',topic:'Full fine-tuning pipeline review',items:['End-to-end: load data → HuggingFace Dataset → tokenize → TrainingArguments → Trainer → train → evaluate → push to Hub','LoRA: explain rank, why it saves memory, which modules to target','Comparison: full fine-tuning vs LoRA vs feature extraction — when would you use each?','Your HuggingFace profile now has a model. Share the URL.'],res:'',check:'you can run the complete fine-tuning pipeline from scratch and have a model live on HuggingFace Hub.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest before final project',items:['Rest completely. Final DL project starts Monday — it combines everything from Phase 4.'],res:'',check:''}]}
+  },
+
+  // ══ WEEK 23 — Final DL Project ══
+  w23:{
+    mon:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Monday',topic:'Telugu Fake News Detector — Data + Setup',items:['Project: fine-tune a multilingual BERT model to detect fake news in Telugu/Hindi news articles','Why this: original, relevant to India, uses Transformer fine-tuning, deployable, resume-worthy','Dataset: search Kaggle for "Telugu fake news" OR "Indian fake news detection" dataset','Alternative: scrape Telugu news headlines from ANI/Sakshi/Eenadu (real) and mark WhatsApp forwards (fake)','Create project: fake_news_detector/data/, notebooks/, app/, model/','Load dataset. Inspect: df["text"].str.len().describe() — article length distribution','Plan: binary classification → real (0) or fake (1)'],res:'📎 Kaggle: search "Hindi fake news", "Indian fake news", "Telugu NLP dataset"',check:''}]},
+    tue:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Tuesday',topic:'Preprocessing + Tokenization',items:['Model choice: "ai4bharat/indic-bert" (trained on Indian languages) OR "google/muril-base-cased" (multilingual including Telugu)','from transformers import AutoTokenizer; tokenizer = AutoTokenizer.from_pretrained("ai4bharat/indic-bert")','Clean text: remove HTML tags, extra spaces, special characters','from datasets import Dataset; ds = Dataset.from_pandas(df[["text","label"]])','Tokenize: tokenizer(text, truncation=True, max_length=256, padding="max_length")','Check: print tokenizer.decode(tokens["input_ids"][0]) — does it decode correctly back to text?','Split: ds.train_test_split(test_size=0.15, seed=42)'],res:'📎 HuggingFace IndicBERT model page · AI4Bharat organization on HuggingFace',check:''}]},
+    wed:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Wednesday',topic:'Fine-tune the model',items:['Apply LoRA for efficiency: r=16, target_modules=["query","value"]','from peft import get_peft_model, LoraConfig; lora_model = get_peft_model(base_model, config)','TrainingArguments: epochs=4, batch_size=16, lr=2e-5, eval_strategy="epoch", save_strategy="epoch", load_best_model_at_end=True','def compute_metrics: return accuracy, f1, precision, recall','trainer.train() on Google Colab T4 GPU','Monitor: training loss and validation loss per epoch — should both decrease','If overfitting: add warmup_ratio=0.1 to TrainingArguments, try smaller learning rate'],res:'📎 Google Colab — free T4 GPU',check:''}]},
+    thu:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Thursday',topic:'Evaluate + explain predictions',items:['Final evaluation on test set: accuracy, F1, precision, recall','Print full classification_report — which class is harder to detect (real or fake)?','Confusion matrix heatmap: how many fake articles were wrongly predicted as real? (High recall for fake = critical)','Error analysis: look at 10 misclassified examples. What pattern do they share?','Attention visualization: use BertViz library to visualize which words the model attends to for key predictions','Push fine-tuned model to HuggingFace Hub: trainer.push_to_hub("your-username/telugu-fake-news-detector")'],res:'📎 BertViz: github.com/jessevig/bertviz',check:''}]},
+    fri:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Friday',topic:'Build Streamlit app',items:['app.py: st.title("🔍 Telugu/Hindi Fake News Detector")','st.text_area("Paste a news article or WhatsApp forward") — large text input','from transformers import pipeline; classifier = pipeline("text-classification", model="your-username/telugu-fake-news-detector")','When "Check Article" clicked: classifier(text)[0] → label and confidence score','Display: st.success("✅ REAL NEWS — 94% confidence") or st.error("⚠️ LIKELY FAKE — 89% confidence")','Show: attention heatmap highlighting suspicious words (color the text based on attention weights)','Language detection: auto-detect if Telugu or English using langdetect library'],res:'📎 Streamlit docs · langdetect Python library',check:''}]},
+    sat:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final DL Project — Saturday',topic:'Deploy + publish + announce',items:['Deploy Streamlit app on Streamlit Cloud — get public URL','Test with 10 real news articles and 10 known fake WhatsApp forwards — does it work?','Write professional README.md: problem, solution, model used, fine-tuning details, results, live URL, HuggingFace model link','Push to GitHub. Add this project to your Fiverr profile immediately.','LinkedIn post: "Fine-tuned multilingual BERT for Telugu/Hindi fake news detection. Live demo: [URL]. Model on HuggingFace: [URL]"','This is your most technically impressive project. It combines: NLP + Transformers + fine-tuning + LoRA + deployment'],res:'',check:'app is live, model is on HuggingFace Hub, GitHub README is complete, and you can demo confidently.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — YOU COMPLETED PHASE 4',topic:'You now know Deep Learning. Rest and reflect.',items:['You have completed the complete 4-phase plan.','Phase 1: Python, Math, Linear Regression. Phase 2: Core ML, SQL, Pipelines. Phase 3: XGBoost, SHAP, PCA, Deployed apps. Phase 4: Neural Networks, PyTorch, CNNs, RNNs, Transformers, Attention, Fine-tuning, LoRA.','You have 6+ GitHub projects. 2+ deployed Streamlit apps. 1 fine-tuned model on HuggingFace Hub.','You are now qualified to apply for: ML Engineer, AI Engineer, NLP Engineer, Deep Learning Engineer roles.','Update your resume today. Update your Fiverr gig today. You earned this.'],res:'',check:''}]}
+  }
+};
+
+function showPhase(id){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ph-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+function toggleWeek(hdr){
+  const b=hdr.nextElementSibling;
+  const c=hdr.querySelector('.wchev');
+  const o=b.classList.contains('open');
+  b.classList.toggle('open',!o);
+  c.classList.toggle('open',!o);
+}
+function showDay(week,day){
+  const data=days[week]&&days[week][day];
+  const panel=document.getElementById(week+'-panel');
+  const strip=document.getElementById(week+'-strip');
+  strip.querySelectorAll('.ws-day').forEach(d=>d.classList.remove('active-day'));
+  event.currentTarget.classList.add('active-day');
+  if(!data){panel.innerHTML='<div class="tip"><strong>Click any day above</strong> to see what to study.</div>';return;}
+  let html=`<div class="dp-header"><div class="dp-dayname">${day.charAt(0).toUpperCase()+day.slice(1)}</div><div class="dp-badge ${data.cls}">${data.badge}</div></div>`;
+  data.blocks.forEach(b=>{
+    html+=`<div class="task-block ${b.cls}"><div class="tb-tag">${b.tag}</div><div class="tb-topic">${b.topic}</div><ul class="tb-items">${b.items.map(i=>`<li>${i}</li>`).join('')}</ul>${b.res?`<div class="tb-res">${b.res}</div>`:''}${b.check?`<div class="tb-check">${b.check}</div>`:''}</div>`;
+  });
+  panel.innerHTML=html;
+}
+</script>
+</body>
+</html>

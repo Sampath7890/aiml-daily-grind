@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ML Roadmap — Day by Day</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0d1117;color:#c9d1d9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.topbar{padding:12px 32px;font-size:11px;letter-spacing:.12em;color:#58a6ff;font-weight:500;}
+.hero{padding:32px 32px 0;}
+.hero h1{font-size:36px;font-weight:800;color:#f0f6fc;line-height:1.2;margin-bottom:8px;}
+.hero h1 span.blue{color:#58a6ff;}
+.hero h1 span.teal{color:#39d353;}
+.hero p{font-size:14px;color:#8b949e;margin-bottom:20px;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:0 32px 0;}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:#8b949e;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.d-python{background:#58a6ff;}
+.d-math{background:#f0883e;}
+.d-ml{background:#39d353;}
+.d-project{background:#a371f7;}
+.d-revision{background:#d29922;}
+.d-rest{background:#484f58;}
+.d-api{background:#f778ba;}
+.d-deploy{background:#ff7b72;}
+.tabs{display:flex;gap:0;padding:28px 32px 0;border-bottom:1px solid #21262d;overflow-x:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:500;color:#8b949e;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.tab:hover{color:#c9d1d9;}
+.tab.active{color:#58a6ff;border-bottom:2px solid #58a6ff;}
+.tab .new-badge{font-size:9px;background:#21262d;color:#f778ba;border:1px solid #f778ba;padding:1px 5px;border-radius:4px;margin-left:6px;font-weight:600;letter-spacing:.05em;}
+.phase-panel{display:none;padding:32px;}
+.phase-panel.active{display:block;}
+.phase-title{font-size:22px;font-weight:700;color:#f0f6fc;margin-bottom:4px;}
+.phase-sub{font-size:13px;color:#8b949e;margin-bottom:24px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.stat{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:20px;text-align:center;}
+.stat-num{font-size:32px;font-weight:700;color:#58a6ff;display:block;}
+.stat-lbl{font-size:11px;color:#8b949e;letter-spacing:.08em;font-weight:500;margin-top:4px;display:block;}
+.week-list{display:flex;flex-direction:column;gap:8px;}
+.week-item{background:#161b22;border:1px solid #21262d;border-radius:10px;overflow:hidden;}
+.week-header{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .15s;}
+.week-header:hover{background:#1c2128;}
+.wk-badge{font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;background:#21262d;color:#58a6ff;white-space:nowrap;}
+.wk-badge.pink{color:#f778ba;}
+.wk-badge.green{color:#39d353;}
+.wk-badge.orange{color:#f0883e;}
+.wk-badge.new{color:#f778ba;border:1px solid #f778ba30;}
+.week-title{font-size:14px;font-weight:500;color:#e6edf3;flex:1;}
+.chevron{margin-left:auto;color:#8b949e;transition:transform .2s;font-size:18px;line-height:1;}
+.week-body{display:none;padding:0 18px 18px;}
+.week-body.open{display:block;}
+.day-grid{display:flex;flex-direction:column;gap:6px;margin-top:12px;}
+.day-row{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:start;}
+.day-name{font-size:11px;font-weight:600;color:#8b949e;padding-top:3px;}
+.day-tasks{display:flex;flex-direction:column;gap:4px;}
+.task{font-size:12px;color:#c9d1d9;display:flex;align-items:baseline;gap:6px;line-height:1.5;}
+.task-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.task strong{color:#e6edf3;font-weight:500;}
+.task em{color:#8b949e;font-style:normal;font-size:11px;}
+.week-note{font-size:12px;color:#8b949e;background:#0d1117;border-left:3px solid #21262d;padding:8px 12px;border-radius:0 6px 6px 0;margin-top:10px;line-height:1.6;}
+.week-note.highlight{border-left-color:#58a6ff;color:#c9d1d9;}
+.week-note.new-note{border-left-color:#f778ba;color:#c9d1d9;}
+.project-box{background:#0d1117;border:1px solid #a371f730;border-radius:8px;padding:10px 14px;margin-top:10px;}
+.project-box .pb-label{font-size:10px;color:#a371f7;font-weight:600;letter-spacing:.08em;margin-bottom:4px;}
+.project-box p{font-size:12px;color:#c9d1d9;line-height:1.6;}
+.api-box{background:#0d1117;border:1px solid #f778ba30;border-radius:8px;padding:10px 14px;margin-top:10px;}
+.api-box .pb-label{font-size:10px;color:#f778ba;font-weight:600;letter-spacing:.08em;margin-bottom:4px;}
+.api-box p{font-size:12px;color:#c9d1d9;line-height:1.6;}
+.new-phase-banner{background:#161b22;border:1px solid #f778ba30;border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:flex-start;gap:16px;}
+.new-phase-banner .icon{font-size:24px;flex-shrink:0;}
+.new-phase-banner .text p{font-size:13px;color:#c9d1d9;line-height:1.6;margin-top:3px;}
+.new-phase-banner .text strong{color:#f778ba;}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}.hero h1{font-size:26px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">NO TIME LIMIT &middot; DAY BY DAY &middot; TOPIC BY TOPIC</div>
+
+<div class="hero">
+  <h1>What to study &mdash; <span class="blue">every day,</span> <span class="teal">every week</span></h1>
+  <p>Python &middot; Mathematics &middot; ML &middot; AI Engineering &middot; GenAI &mdash; mapped to exact days. Click any week to see the full plan.</p>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="dot d-python"></div>Python</div>
+  <div class="leg"><div class="dot d-math"></div>Math</div>
+  <div class="leg"><div class="dot d-ml"></div>ML</div>
+  <div class="leg"><div class="dot d-api"></div>APIs &amp; LLMs</div>
+  <div class="leg"><div class="dot d-deploy"></div>Deployment</div>
+  <div class="leg"><div class="dot d-project"></div>Project</div>
+  <div class="leg"><div class="dot d-revision"></div>Revision</div>
+  <div class="leg"><div class="dot d-rest"></div>Rest</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPhase('p1',this)">Phase 1 &mdash; Foundations</div>
+  <div class="tab" onclick="showPhase('p2',this)">Phase 2 &mdash; Core ML</div>
+  <div class="tab" onclick="showPhase('p25',this)">Phase 2.5 &mdash; AI Engineer Layer <span class="new-badge">NEW</span></div>
+  <div class="tab" onclick="showPhase('p3',this)">Phase 3 &mdash; Advanced ML</div>
+  <div class="tab" onclick="showPhase('p4',this)">Phase 4 &mdash; Deep Learning <span class="new-badge">UPDATED</span></div>
+  <div class="tab" onclick="showPhase('p5',this)">Phase 5 &mdash; GenAI Stack <span class="new-badge">NEW</span></div>
+</div>
+
+<!-- PHASE 1 -->
+<div id="p1" class="phase-panel active">
+  <div class="phase-title">Phase 1 &mdash; Foundations</div>
+  <div class="phase-sub">No time limit &middot; Expand any week &middot; Click a week to see the full day-by-day plan</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">6</span><span class="stat-lbl">WEEKS (MIN)</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-lbl">SUBJECTS</span></div>
+    <div class="stat"><span class="stat-num">2</span><span class="stat-lbl">MINI PROJECTS</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 1</span>
+        <span class="week-title">Variables &middot; Vectors &middot; What is ML</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Variables &amp; data types</strong> — int, float, string, bool. print(), input(), type(). 30 mins code.</span></div>
+            <div class="task"><div class="task-dot d-math"></div><span><strong>What is a vector?</strong> — a list of numbers representing something. Read + write notes.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Lists &amp; indexing</strong> — create, access, slice, modify lists in Python</span></div>
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Vectors as lists</strong> — represent a house as [bedrooms, price, area]</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>What is ML?</strong> — supervised vs unsupervised, features vs labels</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Dictionaries</strong> — key-value pairs, practical use cases</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Scalar multiplication</strong> — multiply a vector by a number, what it means geometrically</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Practice</strong> — 10 small problems on lists and dicts</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-revision"></div><span><strong>Revision notebook</strong> — write 5 questions + answers on everything this week</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>ML in real life</strong> — find 3 products that use ML, write how</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span><strong>Rest</strong> — watch one 3Blue1Brown video on vectors if curious</span></div>
+          </div></div>
+        </div>
+        <div class="week-note highlight">Git commit every day. Even 5 lines of code. Your ML-phase1-foundation repo should show green every weekday.</div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 2</span>
+        <span class="week-title">Loops + Functions &middot; Dot Product &middot; ML Workflow</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>for loops &amp; while loops</strong> — iterate over lists, range(), enumerate()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Functions</strong> — def, return, parameters, default arguments</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>List comprehensions</strong> — [x*2 for x in nums if x &gt; 0]</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Dot product formula</strong> — sum of element-wise products, calculate by hand</span></div>
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Why dot product matters in ML</strong> — measures similarity between two vectors</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>ML Workflow</strong> — data → clean → split → train → evaluate → predict</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Write dot product in Python</strong> — no NumPy yet, just loops and functions</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-revision"></div><span><strong>Revision</strong> — write dot product formula + explain ML workflow in your own words</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 3</span>
+        <span class="week-title">NumPy &mdash; the math engine of ML</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Install &amp; import NumPy</strong> — np.array(), shape, dtype</span></div>
+            <div class="task"><div class="task-dot d-math"></div><span><strong>1D and 2D arrays</strong> — rows and columns as matrices</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Array operations</strong> — add, multiply, slice, reshape</span></div>
+            <div class="task"><div class="task-dot d-math"></div><span><strong>np.dot()</strong> — compare to your manual dot product from Week 2</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Broadcasting</strong> — how NumPy handles different shapes automatically</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>np.zeros, np.ones, np.random</strong> — generate data arrays</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Statistics in NumPy</strong> — np.mean(), np.std(), np.median()</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Indexing &amp; filtering</strong> — arr[arr &gt; 5], boolean masks</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Mini task</strong> — compute cosine similarity between two word vectors using NumPy only</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 4</span>
+        <span class="week-title">Pandas &mdash; working with real data</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>DataFrames &amp; Series</strong> — pd.DataFrame(), read_csv(), head(), info(), describe()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Selecting &amp; filtering</strong> — df['col'], df[df['age']&gt;25], loc vs iloc</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Missing data</strong> — isnull(), dropna(), fillna()</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Groupby &amp; aggregation</strong> — groupby().mean(), value_counts()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Merge &amp; concat</strong> — pd.merge(), pd.concat()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Explore the Iris dataset</strong> — shape, describe(), value_counts(), check nulls, write 5 findings</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 5</span>
+        <span class="week-title">Data Visualization &mdash; Matplotlib &amp; Seaborn</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Matplotlib basics</strong> — plt.plot(), plt.scatter(), labels, titles, plt.show()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Histograms &amp; bar charts</strong> — plt.hist(), plt.bar(), subplots</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Seaborn</strong> — sns.pairplot(), sns.heatmap(), sns.boxplot()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>EDA on Iris</strong> — visualize feature distributions, class separation, correlation heatmap</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-revision"></div><span><strong>Revision notebook</strong> — 5 charts with a 1-line insight written under each one</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge">Week 6</span>
+        <span class="week-title">Mini Project &mdash; Full EDA on Titanic dataset</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="project-box">
+          <div class="pb-label">PROJECT</div>
+          <p>Build a complete EDA notebook on the Titanic dataset (Kaggle). Cover: data loading, cleaning, null handling, feature analysis, 5 visualizations, and a written summary of findings. Push to GitHub.</p>
+        </div>
+        <div class="day-grid" style="margin-top:12px;">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span>Load, explore, and clean the Titanic dataset</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span>Build all visualizations, find patterns (who survived and why?)</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span>Write summary, clean notebook, push to GitHub — Phase 1 done!</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest and celebrate completing Phase 1</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 2 -->
+<div id="p2" class="phase-panel">
+  <div class="phase-title">Phase 2 &mdash; Core ML</div>
+  <div class="phase-sub">No time limit &middot; Build real models with scikit-learn &middot; End with your first Kaggle submission</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">6</span><span class="stat-lbl">WEEKS (MIN)</span></div>
+    <div class="stat"><span class="stat-num">4</span><span class="stat-lbl">ALGORITHMS</span></div>
+    <div class="stat"><span class="stat-num">2</span><span class="stat-lbl">PROJECTS</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 7</span>
+        <span class="week-title">Linear Regression &mdash; your first ML model</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>The line equation</strong> — y = mx + b. Slope and intercept in ML context.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Cost function</strong> — Mean Squared Error. Why we minimize it.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Train/test split</strong> — train_test_split(). Never train on test data.</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>scikit-learn</strong> — LinearRegression().fit().predict()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Evaluate</strong> — MSE, RMSE, R² score. What they mean practically.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Build</strong> — predict house prices using California Housing dataset</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 8</span>
+        <span class="week-title">Classification &mdash; Logistic Regression &amp; KNN</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Sigmoid function</strong> — converts any number to 0–1 probability</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>LogisticRegression</strong> on Iris dataset</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Evaluation metrics</strong> — accuracy, precision, recall, F1. Confusion matrix.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>K-Nearest Neighbors</strong> — how it works, choosing K, KNeighborsClassifier</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Compare both models</strong> on Iris — which performs better and why?</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 9</span>
+        <span class="week-title">Decision Trees &amp; Random Forests</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Decision Trees</strong> — splits, depth, gini impurity, overfitting risk</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Random Forests</strong> — bagging, n_estimators, feature importance</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Titanic survival prediction</strong> using Random Forest. Target: above 80% accuracy.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 10</span>
+        <span class="week-title">Model Evaluation &amp; Hyperparameter Tuning</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Cross-validation</strong> — k-fold, why single train/test is not enough</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Bias-variance tradeoff</strong> — overfitting vs underfitting</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>GridSearchCV</strong> — try all hyperparameter combinations automatically</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-revision"></div><span><strong>Revision</strong> — explain all evaluation metrics in one page of notes</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 11</span>
+        <span class="week-title">Unsupervised Learning &mdash; K-Means &amp; PCA</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>K-Means clustering</strong> — centroids, how it groups data without labels</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>PCA</strong> — reduce many features to 2D for visualization</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Cluster Iris without labels</strong> — visualize with PCA. Does K-Means find the 3 species?</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge green">Week 12</span>
+        <span class="week-title">Kaggle Milestone &mdash; House Prices (first real submission)</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="project-box">
+          <div class="pb-label">KAGGLE MILESTONE</div>
+          <p>House Prices: Advanced Regression Techniques. Full pipeline: EDA → feature engineering → model selection → tune → submit. This is your Phase 2 portfolio piece.</p>
+        </div>
+        <div class="day-grid" style="margin-top:12px;">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks"><div class="task"><div class="task-dot d-ml"></div><span>Download data, full EDA, understand all features</span></div></div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks"><div class="task"><div class="task-dot d-ml"></div><span>Clean nulls, encode categoricals, feature engineering</span></div></div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks"><div class="task"><div class="task-dot d-ml"></div><span>Train Linear Regression + Random Forest. Compare scores.</span></div></div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks"><div class="task"><div class="task-dot d-ml"></div><span>Tune best model. Generate submission CSV.</span></div></div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks"><div class="task"><div class="task-dot d-project"></div><span><strong>Submit to Kaggle. Push notebook to GitHub. Phase 2 complete!</strong></span></div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 2.5 -->
+<div id="p25" class="phase-panel">
+  <div class="phase-title">Phase 2.5 &mdash; AI Engineer Layer</div>
+  <div class="phase-sub">The gap between your roadmap and what jobs actually require &middot; Learn this after Phase 2 before going to Phase 3</div>
+
+  <div class="new-phase-banner">
+    <div class="icon">🎯</div>
+    <div class="text">
+      <strong>Why this phase was added to your plan</strong>
+      <p>Your original roadmap taught ML modelling only. Every real job listing (Impressico Hyderabad, Redsage Hyderabad, Janooma) also requires SQL, a web API framework, and LLM API experience. This phase slots in right after Core ML — when you have real models to deploy and can immediately apply the skills to something meaningful.</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-num pink">3</span><span class="stat-lbl">WEEKS</span></div>
+    <div class="stat"><span class="stat-num pink">3</span><span class="stat-lbl">NEW SKILLS</span></div>
+    <div class="stat"><span class="stat-num pink">2</span><span class="stat-lbl">PORTFOLIO PROJECTS</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 13</span>
+        <span class="week-title">SQL &mdash; query data like every engineer does</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="week-note new-note">SQL appears in 85% of AI/ML job listings. Even model-only roles need it for pulling training data. Start with SQLite — zero setup, works inside Python directly.</div>
+        <div class="day-grid" style="margin-top:12px;">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>SQLite setup</strong> — install DB Browser for SQLite. Create your first database and table.</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>SELECT, FROM, WHERE</strong> — basic queries on a sample table</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>INSERT, UPDATE, DELETE</strong> — modify rows in your table</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>ORDER BY, LIMIT, DISTINCT</strong> — sort and filter results</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>JOINs</strong> — INNER JOIN, LEFT JOIN. Combine two tables with a shared key.</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>GROUP BY + aggregates</strong> — COUNT(), SUM(), AVG(), MAX()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Python + SQLite</strong> — sqlite3 module. Execute queries from inside Python code.</span></div>
+            <div class="task"><div class="task-dot d-python"></div><span><strong>Pandas + SQL</strong> — pd.read_sql_query(). Pull DB results straight into a DataFrame.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Mini project</strong> — import Titanic CSV into SQLite. Write 5 SQL queries: who had the highest survival rate by class, age group, and gender?</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 14</span>
+        <span class="week-title">FastAPI &mdash; serve your ML model as a real API</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="week-note new-note">FastAPI appears in 90% of "AI-driven applications" job listings. This turns your Kaggle models into something a company can actually call from their product.</div>
+        <div class="day-grid" style="margin-top:12px;">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Install FastAPI + Uvicorn</strong> — pip install fastapi uvicorn</span></div>
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Hello World API</strong> — create main.py with one GET endpoint. Run with uvicorn. Open in browser.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>POST endpoints</strong> — send JSON data to the API using a request body</span></div>
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Pydantic models</strong> — define input/output shapes with Python type hints</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Load your saved ML model</strong> — joblib.dump() to save, joblib.load() to restore in FastAPI</span></div>
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>/predict endpoint</strong> — accept features as JSON input, return prediction as JSON output</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Swagger UI</strong> — FastAPI auto-generates docs at /docs. Test your API there — no code needed.</span></div>
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Error handling</strong> — HTTPException, 404 and 422 responses</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Portfolio project</strong> — wrap your Titanic Random Forest in FastAPI. Accept passenger features, return survival probability and confidence. Push to GitHub.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Saturday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Deploy to Render.com</strong> (free tier) — your API is now live at a real URL on the internet</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sunday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+        <div class="api-box">
+          <div class="pb-label">INTERVIEW ANSWER YOU NOW HAVE</div>
+          <p>"I deployed a Random Forest model as a REST API using FastAPI, with JSON input/output, auto-generated Swagger docs, and hosted live on Render." That is a real AI engineer answer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 15</span>
+        <span class="week-title">Claude API + Prompt Engineering &mdash; build with LLMs</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="week-note new-note">You already use Claude every day. This week you learn to call it programmatically. This directly unlocks the Redsage Prompt Engineer role in Hyderabad — which you can apply to immediately after completing this week.</div>
+        <div class="day-grid" style="margin-top:12px;">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Anthropic Python SDK</strong> — pip install anthropic. Get API key from console.anthropic.com.</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>First API call</strong> — send a message, read the response. Understand messages array format.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>System prompts</strong> — define Claude's role and tone for your specific use case</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Multi-turn conversations</strong> — maintain history as the messages array</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Structured output</strong> — prompt Claude to return JSON only. Parse and use in Python.</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Few-shot prompting</strong> — give 2–3 examples inside the prompt to guide the output format</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Chain-of-thought prompting</strong> — ask Claude to reason step by step before giving the final answer</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Prompt templates</strong> — Python functions that build prompts from variables</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Portfolio project</strong> — "News Analyzer" CLI: paste a headline, get back topic, sentiment, credibility score, and summary. Uses your TruthLens domain + Claude API.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Saturday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Combine Week 14 + 15</strong> — wrap the News Analyzer in FastAPI. POST a news article, get back structured JSON analysis from Claude.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sunday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span><strong>Rest. Phase 2.5 complete. You can now apply to Redsage Hyderabad.</strong></span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 3 -->
+<div id="p3" class="phase-panel">
+  <div class="phase-title">Phase 3 &mdash; Advanced ML</div>
+  <div class="phase-sub">Gradient boosting, feature engineering, NLP basics &middot; Compete seriously on Kaggle</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num">3</span><span class="stat-lbl">WEEKS (MIN)</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-lbl">TOPICS</span></div>
+    <div class="stat"><span class="stat-num">1</span><span class="stat-lbl">KAGGLE MEDAL TARGET</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge orange">Week 16</span>
+        <span class="week-title">Feature Engineering &mdash; make your data smarter</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Encoding categoricals</strong> — LabelEncoder, OneHotEncoder, target encoding</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Scaling features</strong> — StandardScaler, MinMaxScaler. When each is appropriate.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Creating new features</strong> — ratios, log transforms, interaction terms from existing columns</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>sklearn Pipeline</strong> — chain preprocessing + model into one reusable, deployable object</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge orange">Week 17</span>
+        <span class="week-title">XGBoost &amp; LightGBM &mdash; what wins Kaggle</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Gradient Boosting concept</strong> — how boosting differs from bagging (Random Forest)</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>XGBoost</strong> — xgb.XGBClassifier(), key hyperparameters (n_estimators, max_depth, lr)</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>LightGBM</strong> — faster on large datasets. lgb.LGBMClassifier(). Compare to XGBoost.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Improve your House Prices Kaggle submission</strong> using XGBoost. Target: top 20%.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge orange">Week 18</span>
+        <span class="week-title">NLP Basics &mdash; text as ML input</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Text preprocessing</strong> — tokenization, stopwords, stemming with NLTK</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>TF-IDF</strong> — convert words to numbers that capture word importance</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Sentiment analysis</strong> — classify text as positive/negative using TF-IDF + Logistic Regression</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Upgrade TruthLens v2</strong> — replace heuristic rules with a trained TF-IDF + classifier model</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest — Phase 3 complete</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 4 -->
+<div id="p4" class="phase-panel">
+  <div class="phase-title">Phase 4 &mdash; Deep Learning</div>
+  <div class="phase-sub">Neural Networks &rarr; PyTorch &rarr; CNNs &rarr; RNNs &rarr; Transformers &rarr; Attention &rarr; Fine-tuning &middot; No time limit &middot; Day by day</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-num pink">8</span><span class="stat-lbl">WEEKS (MIN)</span></div>
+    <div class="stat"><span class="stat-num pink">5</span><span class="stat-lbl">TOPICS</span></div>
+    <div class="stat"><span class="stat-num pink">3</span><span class="stat-lbl">PROJECTS</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 19</span>
+        <span class="week-title">Neural Networks from scratch &mdash; the foundation of everything</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Perceptron</strong> — weights, bias, activation functions (ReLU, Sigmoid)</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Forward pass</strong> — compute output layer by layer using NumPy</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-math"></div><span><strong>Backpropagation</strong> — gradients, chain rule, how the network learns from errors</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Build a 2-layer NN in pure NumPy</strong> — classify the XOR problem without any library</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 20</span>
+        <span class="week-title">PyTorch &mdash; the industry standard deep learning framework</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Tensors</strong> — torch.tensor(), operations, shape, GPU vs CPU basics</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>nn.Module</strong> — define a model class with layers and forward()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Training loop</strong> — optimizer, loss, zero_grad(), backward(), step()</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Reimplement Week 19 NN in PyTorch</strong> — same XOR task, compare the code length and clarity</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 21</span>
+        <span class="week-title">CNNs &mdash; Convolutional Neural Networks for images</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Convolution operation</strong> — filters, feature maps, MaxPooling, stride, padding</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Build a CNN in PyTorch</strong> — Conv2d, MaxPool2d, Flatten, Linear layers</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Train on MNIST</strong> — digit classification. Target: above 98% accuracy.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 22</span>
+        <span class="week-title">RNNs + LSTMs &mdash; neural networks that understand sequences</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Why sequences are different</strong> — order matters in text and time series data</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>RNN cell</strong> — hidden state, how it passes memory forward through time</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>LSTM</strong> — forget gate, input gate, output gate. Solves vanishing gradients.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Sentiment classifier with LSTM</strong> — IMDb movie reviews dataset</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 23</span>
+        <span class="week-title">Transformers &mdash; the architecture that runs modern AI</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Self-attention</strong> — how every token attends to every other token. Q, K, V matrices.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Multi-head attention</strong> — multiple attention heads running in parallel</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Positional encoding</strong> — how Transformers know the order of words</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>HuggingFace Transformers</strong> — run BERT sentiment analysis in under 10 lines of code</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 24</span>
+        <span class="week-title">Attention + BERT &mdash; understanding pretrained models</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Wed</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>BERT architecture</strong> — encoder-only, masked language modelling, the [CLS] token</span></div>
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Tokenizers</strong> — how text becomes tokens, subword tokenization, vocab</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thu-Fri</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Fine-tune BERT</strong> on a text classification task using HuggingFace Trainer API</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Week 25</span>
+        <span class="week-title">Fine-tuning &mdash; customize models for your domain</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>Transfer learning</strong> — freeze base layers, train only the classification head</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-ml"></div><span><strong>LoRA / QLoRA</strong> — efficient fine-tuning that works with limited GPU memory (your 8GB setup)</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Fine-tune distilBERT</strong> on fake news detection — upgrade TruthLens one more time</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge pink">Weeks 26-27</span>
+        <span class="week-title">Final Deep Learning Project</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="project-box">
+          <div class="pb-label">CAPSTONE PROJECT</div>
+          <p>Build end-to-end. Pick one: (1) CNN image classifier + FastAPI endpoint, (2) Custom BERT classifier fine-tuned on your domain, (3) TruthLens 3.0 — Transformer-based fake news detection replacing all heuristics. GitHub repo + README + live deployed URL.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PHASE 5 -->
+<div id="p5" class="phase-panel">
+  <div class="phase-title">Phase 5 &mdash; GenAI Stack</div>
+  <div class="phase-sub">LangChain &middot; Vector Databases &middot; RAG &middot; AI Agents &middot; Cloud Deployment &middot; Unlocks LLM Engineer roles at ₹8–12 LPA</div>
+
+  <div class="new-phase-banner">
+    <div class="icon">🚀</div>
+    <div class="text">
+      <strong>This phase unlocks the Janooma LLM Systems Engineer role and similar GenAI positions.</strong>
+      <p>By the time you reach here, you know ML deeply, can call LLM APIs, built and deployed with FastAPI, and understand Transformers. Now you build the full AI application layer companies are hiring for.</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-num pink">6</span><span class="stat-lbl">WEEKS (MIN)</span></div>
+    <div class="stat"><span class="stat-num pink">4</span><span class="stat-lbl">NEW SKILLS</span></div>
+    <div class="stat"><span class="stat-num pink">2</span><span class="stat-lbl">PORTFOLIO PROJECTS</span></div>
+    <div class="stat"><span class="stat-num" style="color:#39d353;">∞</span><span class="stat-lbl">TIME LIMIT</span></div>
+  </div>
+
+  <div class="week-list">
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 28</span>
+        <span class="week-title">LangChain &mdash; build LLM-powered applications</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>LangChain basics</strong> — LLMs, chains, prompts, output parsers</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Memory</strong> — ConversationBufferMemory, give your chatbot persistent context</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Document loaders</strong> — load PDFs, text files, websites into LangChain</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Build</strong> — a chatbot that answers questions about any PDF you give it</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 29</span>
+        <span class="week-title">Vector Databases + RAG &mdash; make LLMs remember your data</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Monday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Embeddings</strong> — convert text to vectors using sentence-transformers or OpenAI embeddings</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Tuesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>ChromaDB</strong> — store embeddings locally. Add, query, search by semantic similarity.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>RAG pipeline</strong> — embed documents → store → retrieve relevant chunks → send to Claude → get grounded answer</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Fri-Sat</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Portfolio project</strong> — "Ask My Notes" app: upload your ML study notes as PDFs, ask any question, get answers with source references. Wrap in FastAPI.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sunday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 30</span>
+        <span class="week-title">AI Agents &mdash; LLMs that take actions</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>What is an agent?</strong> — an LLM that decides what tool to call and acts on the result</span></div>
+            <div class="task"><div class="task-dot d-api"></div><span><strong>Tool use in LangChain</strong> — define Python functions as tools, let the LLM choose which to run</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wed-Thu</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-api"></div><span><strong>LangGraph</strong> — build multi-step agent workflows with state management</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Build an agent</strong> — give it tools: web search + your ML model + calculator. Let it answer compound questions automatically.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Week 31</span>
+        <span class="week-title">Cloud Deployment &mdash; put everything on the internet</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="day-grid">
+          <div class="day-row"><span class="day-name">Mon-Tue</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Docker basics</strong> — Dockerfile, build, run. Containerise your FastAPI app.</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Wednesday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>AWS free tier</strong> — deploy Docker container to EC2, or use Railway/Render for simpler hosting</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Thursday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-deploy"></div><span><strong>Environment variables &amp; secrets</strong> — manage API keys securely in production, never in code</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Friday</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-project"></div><span><strong>Deploy the RAG app from Week 29</strong> to a real public URL — share it on your resume</span></div>
+          </div></div>
+          <div class="day-row"><span class="day-name">Sat-Sun</span><div class="day-tasks">
+            <div class="task"><div class="task-dot d-rest"></div><span>Rest</span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="week-item">
+      <div class="week-header" onclick="toggle(this)">
+        <span class="wk-badge new">Weeks 32-33</span>
+        <span class="week-title">Final Capstone &mdash; full AI Engineer portfolio project</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="week-body">
+        <div class="project-box">
+          <div class="pb-label">FINAL CAPSTONE PROJECT</div>
+          <p>Build one complete AI-powered application combining: ML model + FastAPI backend + SQLite database + Claude API + RAG or agent workflow + deployed on cloud. Suggested: "Smart News Analyzer v3" — scrapes headlines, classifies them with your ML model, lets users chat with AI about the news using RAG, stores history in SQLite, deployed on AWS. Full stack. Real URL. GitHub README with demo video.</p>
+        </div>
+        <div class="api-box" style="margin-top:12px;">
+          <div class="pb-label">ROLES THIS UNLOCKS</div>
+          <p>After this project you can apply for: LLM Systems Engineer (Janooma, Bengaluru — ₹8–12 LPA), GenAI Python Full Stack Trainee (Impressico, Hyderabad), Prompt Engineer (Redsage, Hyderabad), AI-Native Developer internships across India. Phase 5 complete = job-ready.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="height:48px;"></div>
+
+<script>
+function showPhase(id, el) {
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  const open = body.classList.toggle('open');
+  chevron.style.transform = open ? 'rotate(180deg)' : '';
+}
+</script>
+</body>
+</html>

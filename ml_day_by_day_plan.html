@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#0D1117; --card:#161B27; --card2:#1C2235; --border:#252D42;
+  --text:#E8EDF8; --muted:#7A839E; --faint:#353D58;
+  --py:#4A90E2; --py-bg:rgba(74,144,226,0.10); --py-bd:rgba(74,144,226,0.28);
+  --math:#E2944A; --math-bg:rgba(226,148,74,0.10); --math-bd:rgba(226,148,74,0.28);
+  --ml:#4ACD8A; --ml-bg:rgba(74,205,138,0.10); --ml-bd:rgba(74,205,138,0.28);
+  --proj:#A855F7; --proj-bg:rgba(168,85,247,0.10); --proj-bd:rgba(168,85,247,0.28);
+  --rev:#E2D44A; --rev-bg:rgba(226,212,74,0.08); --rev-bd:rgba(226,212,74,0.25);
+  --rest:#6B7280; --rest-bg:rgba(107,114,128,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0D1117,#131A2E,#0D1117);padding:28px 24px 24px;border-bottom:1px solid var(--border);}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#A855F7;margin-bottom:10px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;}
+.hero-title span{color:#4A90E2;}
+.hero-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.legend{display:flex;gap:10px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+/* NAV TABS */
+.phases{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 24px;position:sticky;top:0;z-index:20;}
+.phases::-webkit-scrollbar{display:none;}
+.ph-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:12px 15px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.ph-btn:hover{color:var(--text);}
+.ph-btn.on{color:var(--text);border-bottom-color:#A855F7;}
+
+/* CONTENT */
+.content{padding:20px 24px 60px;max-width:760px;margin:0 auto;}
+.ptab{display:none;} .ptab.on{display:block;}
+
+.phase-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;}
+.phase-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+
+/* WEEK CARD */
+.wcard{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.wcard-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.wcard-head:hover{background:var(--card2);}
+.wnum{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--muted);flex-shrink:0;}
+.wnum.proj{background:var(--proj-bg);border-color:var(--proj-bd);color:var(--proj);}
+.wnum.final{background:var(--ml-bg);border-color:var(--ml-bd);color:var(--ml);}
+.wtitle{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.wchev{color:var(--faint);font-size:13px;transition:transform .3s;flex-shrink:0;}
+.wchev.open{transform:rotate(180deg);}
+.wbody{display:none;border-top:1px solid var(--border);}
+.wbody.open{display:block;}
+
+/* WEEK OVERVIEW STRIP */
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.ws-day{border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.ws-day:hover{opacity:.85;}
+.ws-day.active-day{border-color:rgba(255,255,255,.25)!important;box-shadow:0 0 0 2px rgba(255,255,255,.08);}
+.ws-dname{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+.ws-subj{font-size:10px;font-weight:600;}
+.ws-py{background:var(--py-bg);border-color:var(--py-bd);}
+.ws-math{background:var(--math-bg);border-color:var(--math-bd);}
+.ws-ml{background:var(--ml-bg);border-color:var(--ml-bd);}
+.ws-proj{background:var(--proj-bg);border-color:var(--proj-bd);}
+.ws-rev{background:var(--rev-bg);border-color:var(--rev-bd);}
+.ws-rest{background:var(--rest-bg);border-color:rgba(107,114,128,.2);}
+
+/* DAY DETAIL PANEL */
+.day-panel{padding:18px;}
+.dp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.dp-dayname{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+.dp-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid;}
+.dp-py{background:var(--py-bg);color:var(--py);border-color:var(--py-bd);}
+.dp-math{background:var(--math-bg);color:var(--math);border-color:var(--math-bd);}
+.dp-ml{background:var(--ml-bg);color:var(--ml);border-color:var(--ml-bd);}
+.dp-proj{background:var(--proj-bg);color:var(--proj);border-color:var(--proj-bd);}
+.dp-rev{background:var(--rev-bg);color:var(--rev);border-color:var(--rev-bd);}
+.dp-rest{background:var(--rest-bg);color:var(--rest);border-color:rgba(107,114,128,.3);}
+
+/* TASK BLOCKS */
+.task-block{border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid;}
+.task-block:last-child{margin-bottom:0;}
+.tb-py{background:var(--py-bg);border-color:var(--py);}
+.tb-math{background:var(--math-bg);border-color:var(--math);}
+.tb-ml{background:var(--ml-bg);border-color:var(--ml);}
+.tb-proj{background:var(--proj-bg);border-color:var(--proj);}
+.tb-rev{background:var(--rev-bg);border-color:var(--rev);}
+.tb-rest{background:var(--rest-bg);border-color:var(--rest);border-left-style:dashed;}
+
+.tb-tag{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.tb-py .tb-tag{color:var(--py);}
+.tb-math .tb-tag{color:var(--math);}
+.tb-ml .tb-tag{color:var(--ml);}
+.tb-proj .tb-tag{color:var(--proj);}
+.tb-rev .tb-tag{color:var(--rev);}
+.tb-rest .tb-tag{color:var(--rest);}
+
+.tb-topic{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.tb-items{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.tb-items li{font-size:12px;color:var(--muted);display:flex;gap:8px;line-height:1.5;}
+.tb-items li::before{content:'–';color:var(--faint);flex-shrink:0;}
+.tb-res{margin-top:8px;font-size:11px;color:var(--faint);font-style:italic;}
+.tb-check{margin-top:10px;background:rgba(74,205,138,0.06);border:1px solid rgba(74,205,138,.2);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--ml);}
+.tb-check::before{content:'✓ Done when: ';font-weight:600;}
+
+.tip{background:rgba(91,142,240,.06);border:1px dashed rgba(91,142,240,.25);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6;}
+.tip strong{color:#5B8EF0;}
+
+/* STAT ROW */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.stat-n{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,#4A90E2,#4ACD8A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:3px;}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">No time limit · Day by day · Topic by topic</div>
+  <div class="hero-title">What to study — <span>every day,</span> every week</div>
+  <div class="hero-sub">Python · Mathematics · ML — mapped to exact days. Click any day to see the full plan.</div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--py)"></div><span style="color:var(--py)">Python</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--math)"></div><span style="color:var(--math)">Math</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--ml)"></div><span style="color:var(--ml)">ML</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--proj)"></div><span style="color:var(--proj)">Project</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--rev)"></div><span style="color:var(--rev)">Revision</span></div>
+    <div class="leg"><div class="leg-dot" style="background:var(--rest)"></div><span style="color:var(--rest)">Rest</span></div>
+  </div>
+</div>
+
+<div class="phases">
+  <button class="ph-btn on" onclick="showPhase('p1')">Phase 1 — Foundations</button>
+  <button class="ph-btn" onclick="showPhase('p2')">Phase 2 — Core ML</button>
+  <button class="ph-btn" onclick="showPhase('p3')">Phase 3 — Advanced</button>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════ PHASE 1 ═══════════════ -->
+<div class="ptab on" id="tab-p1">
+  <div class="phase-title">Phase 1 — Foundations</div>
+  <div class="phase-sub">No time limit · Expand any week · Click a day to see exactly what to do</div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">Weeks (min)</div></div>
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Subjects</div></div>
+    <div class="stat"><div class="stat-n">2</div><div class="stat-l">Mini projects</div></div>
+    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Time limit</div></div>
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 1</span>
+      <span class="wtitle">Variables · Vectors · What is ML</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w1-strip">
+        <div class="ws-day ws-py" onclick="showDay('w1','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w1','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w1','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w1','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w1','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w1','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w1','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w1-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 2</span>
+      <span class="wtitle">Loops + Functions · Dot Product · ML Workflow</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w2-strip">
+        <div class="ws-day ws-py" onclick="showDay('w2','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w2','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w2','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w2','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w2','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w2','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w2','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w2-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 3 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 3</span>
+      <span class="wtitle">NumPy · Matrices · Exploring Real Data</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w3-strip">
+        <div class="ws-day ws-py" onclick="showDay('w3','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w3','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w3','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w3','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w3','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w3','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w3','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w3-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 4 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 4</span>
+      <span class="wtitle">Pandas · Derivatives · Linear Regression Theory</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w4-strip">
+        <div class="ws-day ws-py" onclick="showDay('w4','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w4','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w4','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w4','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w4','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w4','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w4','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w4-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 5 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 5</span>
+      <span class="wtitle">Visualization · Probability · Linear Regression Code</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w5-strip">
+        <div class="ws-day ws-py" onclick="showDay('w5','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w5','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w5','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w5','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w5','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w5','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w5','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w5-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 6 — PROJECTS -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum proj">Week 6</span>
+      <span class="wtitle">Mini Project Build + Full Phase 1 Revision</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w6-strip">
+        <div class="ws-day ws-proj" onclick="showDay('w6','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w6','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w6','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w6','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w6','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--proj)">Project</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w6','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w6','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w6-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to build that day.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PHASE 2 ═══════════════ -->
+<div class="ptab" id="tab-p2">
+  <div class="phase-title">Phase 2 — Core ML</div>
+  <div class="phase-sub">Classification · Pipelines · Evaluation · 2 Major Projects · No time limit</div>
+
+  <!-- WEEK 7 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 7</span>
+      <span class="wtitle">Sklearn Pipelines · Gradient Descent · Logistic Regression Theory</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w7-strip">
+        <div class="ws-day ws-py" onclick="showDay('w7','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w7','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w7','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w7','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w7','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w7','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w7','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w7-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 8 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 8</span>
+      <span class="wtitle">Logistic Regression Code · Evaluation Metrics · Overfitting</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w8-strip">
+        <div class="ws-day ws-ml" onclick="showDay('w8','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--ml)">ML+Code</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w8','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w8','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w8','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w8','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w8','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w8','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w8-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 9 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 9</span>
+      <span class="wtitle">Feature Engineering · Correlation · Decision Trees</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w9-strip">
+        <div class="ws-day ws-py" onclick="showDay('w9','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w9','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w9','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w9','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w9','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w9','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w9','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w9-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 10 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 10</span>
+      <span class="wtitle">SQL · Regularization · Random Forest + Imbalanced Data</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w10-strip">
+        <div class="ws-day ws-py" onclick="showDay('w10','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">SQL</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w10','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w10','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">SQL</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w10','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w10','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w10','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w10','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w10-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 11 — MAJOR PROJECT -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum proj">Week 11</span>
+      <span class="wtitle">Major Project 1 — Hyderabad Rental Estimator</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w11-strip">
+        <div class="ws-day ws-proj" onclick="showDay('w11','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--proj)">Data</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w11','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--proj)">EDA</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w11','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--proj)">Model</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w11','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--proj)">UI</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w11','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--proj)">Deploy</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w11','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Polish</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w11','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w11-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to build that day.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PHASE 3 ═══════════════ -->
+<div class="ptab" id="tab-p3">
+  <div class="phase-title">Phase 3 — Advanced & Deploy</div>
+  <div class="phase-sub">XGBoost · PCA · Bayes · SHAP · Streamlit · Final deployed project · No time limit</div>
+
+  <!-- WEEK 12 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 12</span>
+      <span class="wtitle">XGBoost · Bayes Theorem · SHAP Explainability</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w12-strip">
+        <div class="ws-day ws-py" onclick="showDay('w12','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w12','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w12','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w12','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w12','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w12','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w12','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w12-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 13 -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum">Week 13</span>
+      <span class="wtitle">Streamlit Deploy · PCA · K-Means Clustering</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w13-strip">
+        <div class="ws-day ws-py" onclick="showDay('w13','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--py)">Python</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w13','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-py" onclick="showDay('w13','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--py)">Deploy</div></div>
+        <div class="ws-day ws-math" onclick="showDay('w13','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--math)">Math</div></div>
+        <div class="ws-day ws-ml" onclick="showDay('w13','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--ml)">ML</div></div>
+        <div class="ws-day ws-rev" onclick="showDay('w13','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--rev)">Revise</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w13','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Rest</div></div>
+      </div>
+      <div class="day-panel" id="w13-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to study on that day.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 14 — FINAL PROJECT -->
+  <div class="wcard">
+    <div class="wcard-head" onclick="toggleWeek(this)">
+      <span class="wnum final">Week 14–15</span>
+      <span class="wtitle">Final Project — Student Burnout Warning System</span>
+      <span class="wchev">▾</span>
+    </div>
+    <div class="wbody">
+      <div class="week-strip" id="w14-strip">
+        <div class="ws-day ws-proj" onclick="showDay('w14','mon')"><div class="ws-dname">Mon</div><div class="ws-subj" style="color:var(--proj)">Data</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w14','tue')"><div class="ws-dname">Tue</div><div class="ws-subj" style="color:var(--proj)">EDA</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w14','wed')"><div class="ws-dname">Wed</div><div class="ws-subj" style="color:var(--proj)">Model</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w14','thu')"><div class="ws-dname">Thu</div><div class="ws-subj" style="color:var(--proj)">SHAP</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w14','fri')"><div class="ws-dname">Fri</div><div class="ws-subj" style="color:var(--proj)">App</div></div>
+        <div class="ws-day ws-proj" onclick="showDay('w14','sat')"><div class="ws-dname">Sat</div><div class="ws-subj" style="color:var(--proj)">Deploy</div></div>
+        <div class="ws-day ws-rest" onclick="showDay('w14','sun')"><div class="ws-dname">Sun</div><div class="ws-subj" style="color:var(--rest)">Celebrate</div></div>
+      </div>
+      <div class="day-panel" id="w14-panel">
+        <div class="tip"><strong>Click any day above</strong> to see exactly what to build that day.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// All day content
+const days = {
+  // ══════ WEEK 1 ══════
+  w1:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Install everything + first programs',items:['Install Python 3.11+ from python.org and VS Code from code.visualstudio.com','Install Python extension in VS Code. Open terminal. Type python --version.','Write your first program: print("Hello, I am Sampath")','Variables: name = "Sampath", age = 21, gpa = 8.5, is_student = True','Arithmetic: +, -, *, /, //, %, ** — test all of these','String formatting: f"My name is {name} and I am {age} years old"','Mini task: write a simple calculator that adds, subtracts, multiplies two numbers'],res:'📎 CS50P edX Week 0 — free audit',check:'your calculator runs without any errors and prints correct answers.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Vectors — what they are visually',items:['A scalar is just one number: 5, -3.2, 100','A vector is a number with direction: think of an arrow pointing somewhere','Draw a 2D vector (3, 4) on paper — 3 steps right, 4 steps up. Draw the arrow.','Draw 5 more vectors. Make them point in different directions.','Vector addition: place arrows head to tail. Draw the result.','Scalar multiplication: double a vector = arrow twice as long. Same direction.','Key insight: in ML, every data point is a vector. A student with marks [85, 90, 70] is a vector in 3D space.'],res:'📎 3Blue1Brown "Essence of Linear Algebra" Chapter 1 — YouTube. Watch twice.',check:'you can draw a vector, add two vectors, and multiply by a scalar — all on paper without any help.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'if/else + data types deep dive',items:['if / elif / else — make the computer take decisions','Write: if score >= 90: "A grade" elif score >= 75: "B grade" else: "C grade"','Data type practice: int vs float vs string vs bool — know when each is used','Type conversion: int("42"), str(100), float("3.14")','input() function: take values from the user while the program runs','Mini task: build a grade calculator — ask for 5 subject marks, calculate average, print grade'],res:'📎 CS50P Week 1 — conditionals section',check:'your grade calculator correctly handles different mark ranges and prints the right grade.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Vectors in Python — connect math to code',items:['Open a Python file (not NumPy yet — just lists)','Represent a vector as a list: v = [3, 4]','Write a function add_vectors(v1, v2) that adds two vectors element by element','Write a function scale_vector(v, s) that multiplies every element by scalar s','Calculate dot product manually: sum(v1[i]*v2[i] for i in range(len(v1)))','Test with: [1,2] and [3,4] → dot product = 1×3 + 2×4 = 11','Draw the result of your dot product calculation on paper and verify'],res:'📎 Khan Academy "Vectors" introduction — free',check:'your Python functions correctly add, scale, and compute dot product of two vectors.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'What is Machine Learning — the big picture',items:['Traditional program: YOU write rules. ML: the algorithm finds the rules from examples.','Supervised learning: labeled data. You know the answer. Train on it.','Unsupervised learning: no labels. Find hidden patterns.','Reinforcement learning: agent learns by reward/punishment.','Real examples you already know: Gmail spam, YouTube reco, Google Translate, Swiggy ETA','Watch: "But what is a neural network?" by 3Blue1Brown — 19 minutes. Just absorb it.','Write 3 sentences explaining ML in your own words. No copying.'],res:'📎 Google ML Crash Course — Introduction section (free)',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Full Week Revision',topic:'Consolidate everything from Week 1',items:['Python: rewrite the grade calculator from scratch without looking at the original','Math: draw 5 new vectors on paper, add 3 pairs, scale 2 by different scalars','Math: write the vector functions again in Python from memory','ML: explain the 3 types of ML to yourself out loud in under 2 minutes','Write in your notebook: what did I learn this week? Any confusions?','If anything is unclear — look it up today. Don\'t carry confusion to Week 2.'],res:'',check:'you can write the grade calculator and vector functions from memory without any reference.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Complete Rest',topic:'Do not study today',items:['Your brain consolidates learning during rest — this day is not wasted','Go outside, watch a movie, talk to friends','If you really want to do something: re-read your Week 1 notebook notes for 15 minutes only','Do not open VS Code or YouTube today'],res:'',check:''}]}
+  },
+  // ══════ WEEK 2 ══════
+  w2:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'for loops + while loops',items:['for loop: repeat for every item in a list or range','for i in range(10): print(i) — count 0 to 9','for subject in ["Math","Python","ML"]: print(subject)','while loop: keep going until condition is False','Practice: print multiplication table of any number using a loop','Practice: find the sum of numbers 1 to 100 using a loop','Mini task: FizzBuzz — print 1 to 100, replace multiples of 3 with Fizz, 5 with Buzz, both with FizzBuzz'],res:'📎 CS50P Week 2 — Loops section',check:'your FizzBuzz runs perfectly for all numbers 1 to 100.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Dot product — the meaning behind the numbers',items:['Dot product formula: a·b = a₁b₁ + a₂b₂ + ... (multiply pairs, sum everything)','Calculate by hand: [2,3]·[4,1] = 2×4 + 3×1 = 11','Geometric meaning: dot product tells you HOW ALIGNED two vectors are','If dot product = 0: vectors are perpendicular (totally unrelated)','If dot product is large and positive: vectors point in same direction','Real ML example: in a search engine, your query is a vector. Each document is a vector. Dot product = relevance score.','Do 5 dot product calculations by hand. Verify using your Week 1 Python function.'],res:'📎 3Blue1Brown Linear Algebra Chapter 2 — YouTube',check:'you can explain what dot product = 0 means using your own real-world analogy.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Functions — define once, use everywhere',items:['def function_name(parameters): ... return value','Write: def calculate_average(marks_list): — returns average','Write: def find_largest(numbers): — returns the biggest number','Write: def is_passing(mark, threshold=40): — True if mark >= threshold','Default parameters: def greet(name, message="Hello"): f"{message}, {name}"','Combine: write a function that takes a list of marks and returns grade','Mini task: write a complete student report card program using only functions'],res:'📎 Kaggle Python micro-course — Functions lesson (free)',check:'you can write the student report card program from scratch using only functions — no global code.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Dot product in Python + vector intuition practice',items:['Use numpy for the first time: import numpy as np','np.array([1,2,3]) — create your first NumPy array','np.dot(v1, v2) — compute dot product with one line','Verify: does np.dot([2,3],[4,1]) give you 11? Yes.','np.linalg.norm(v) — length of a vector (magnitude)','Unit vector: divide a vector by its magnitude to get length = 1','Play: compute dot products of 10 different vector pairs. Notice when they are large vs small.'],res:'📎 NumPy official beginner guide — numpy.org',check:'you can use NumPy to create arrays and compute dot products and norms without Googling.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'The ML workflow — 5 steps every project follows',items:['Step 1: Collect data — get a CSV with features and labels','Step 2: Explore it — look at distributions, missing values, patterns','Step 3: Choose a model — start simple (linear regression)','Step 4: Train it — let the algorithm find patterns from training data','Step 5: Evaluate it — test on data the model never saw','Load Iris dataset: from sklearn.datasets import load_iris','Print: shape, feature names, first 5 rows. Just look. Don\'t model yet.','Identify: what are the features? What is the label?'],res:'📎 Scikit-learn "Getting Started" guide — official docs',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 2 Revision',topic:'Loops, functions, dot product consolidation',items:['Python: rewrite FizzBuzz and student report card from scratch — no peeking','Math: compute 5 dot products by hand, then verify with NumPy','ML: draw the 5-step ML workflow on paper as a diagram','Teach back: explain functions to yourself out loud as if teaching a friend','Check: any topic that confused you this week — revisit it now. One more day.'],res:'',check:'you can write FizzBuzz, compute dot products, and explain the ML workflow — all without any notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Recover and consolidate',items:['No studying today. Your brain needs this.','Optional 15 min: write in your notebook what Week 2 felt like. What was hard? What clicked?'],res:'',check:''}]}
+  },
+  // ══════ WEEK 3 ══════
+  w3:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'NumPy — arrays built for math',items:['import numpy as np','np.array([1,2,3,4,5]) — 1D array','np.array([[1,2],[3,4]]) — 2D array (matrix)','Array properties: .shape, .dtype, .ndim, .size','Indexing: arr[0], arr[1:3], arr[-1]','2D indexing: arr[0,1] = row 0, column 1','Operations: arr + 5, arr * 2, arr ** 2 — applied to every element at once','No loops needed — that\'s the power of NumPy'],res:'📎 NumPy "Absolute Beginner Guide" — numpy.org',check:'you can create 1D and 2D arrays, index them, and perform element-wise operations without Googling.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Matrices — datasets are matrices',items:['Matrix = grid of numbers arranged in rows and columns','A 3×2 matrix has 3 rows and 2 columns','Matrix addition: add element by element. ONLY works if shapes are identical.','Example: [[1,2],[3,4]] + [[5,6],[7,8]] = [[6,8],[10,12]]','Transpose: flip rows and columns. A 3×2 becomes 2×3.','Do 3 matrix additions by hand. Check your answer with NumPy.','Key insight: your training dataset is a matrix. Each row = one student/house/observation.'],res:'📎 3Blue1Brown Linear Algebra Chapters 3–4 — YouTube',check:'you can add two 3×3 matrices by hand AND explain why matrix shape matters.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'NumPy operations — the math comes alive',items:['np.zeros((3,3)), np.ones((2,4)), np.eye(3) — special matrices','np.mean(arr), np.sum(arr), np.max(arr), np.min(arr)','Axis parameter: np.mean(arr, axis=0) = column means. axis=1 = row means.','Matrix multiplication: np.dot(A,B) or A @ B','Reshaping: arr.reshape(2,3) — change shape without changing data','np.concatenate, np.vstack, np.hstack — join arrays','Task: create a 5×3 array representing 5 students and 3 subject marks. Compute each student\'s average.'],res:'',check:'you can compute student averages on a 5×3 NumPy array using axis parameters — no loops.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Matrix multiplication — the engine of ML',items:['Matrix multiplication: rows of A × columns of B','A must have same number of columns as B has rows: (m×n) × (n×p) = (m×p)','Do 2 matrix multiplications completely by hand — step by step','Verify with NumPy: np.dot(A, B)','Why it matters: a neural network is just many matrix multiplications in sequence','Transpose: AT[i,j] = A[j,i]. In NumPy: A.T','Verify matrix multiplication manually then with NumPy — they must match'],res:'📎 Khan Academy matrix multiplication — very clear step-by-step',check:'you can multiply a (2×3) matrix by a (3×2) matrix by hand and explain why the result is (2×2).'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Exploratory Data Analysis (EDA)',items:['Load any CSV dataset from Kaggle (suggest: "Titanic" or "House Prices")','import pandas as pd; df = pd.read_csv("file.csv")','df.head() — first 5 rows. df.shape — rows × columns. df.info() — data types.','df.describe() — mean, std, min, max for each numeric column','df.isnull().sum() — how many missing values per column?','df["column"].value_counts() — how many of each category?','Don\'t model yet. Just answer: what is this data about? What would I predict?'],res:'📎 Any Kaggle dataset with notebook examples — kaggle.com/datasets',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 3 Revision',topic:'NumPy + matrices + EDA',items:['NumPy: create a 4×4 array from scratch, compute row means and column sums — from memory','Math: multiply two 3×2 matrices by hand. Verify with NumPy. They must match.','EDA: load the Titanic dataset. Answer: how many passengers survived? What\'s the average age? How many missing values in Age?','Teach back: explain matrix multiplication to yourself using the "rows × columns" mental model'],res:'',check:'you can perform matrix multiplication by hand AND answer 3 data questions using Pandas without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['No studying today.','Optional: watch 1 StatQuest video on a topic that confused you this week — just one.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 4 ══════
+  w4:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Pandas — read, explore, and clean data',items:['import pandas as pd','pd.read_csv(), pd.read_excel() — load data','df.head(10), df.tail(5), df.sample(5)','df.columns, df.dtypes, df.shape, df.info()','Selecting: df["Age"], df[["Name","Age"]], df.iloc[0:5]','Filtering: df[df["Age"] > 25], df[(df["Age"]>25) & (df["Survived"]==1)]','Missing values: df.isnull().sum(), df.dropna(), df.fillna(df.mean())'],res:'📎 Kaggle Pandas micro-course — Lesson 1 and 2 (free)',check:'you can load a CSV, select columns, filter rows, and handle missing values without Googling syntax.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Derivatives — the slope of a curve at one point',items:['A derivative tells you: if x changes by a tiny amount, how much does f(x) change?','Constant: f(x)=5 → derivative = 0 (flat, no change)','Linear: f(x)=3x → derivative = 3 (slope is always 3)','Quadratic: f(x)=x² → derivative = 2x (slope changes with x)','At x=3: slope of x² is 2×3=6. At x=-1: slope is -2.','Draw f(x)=x² on paper. Draw the tangent line at x=2. That slope is the derivative.','Why ML cares: the derivative tells the model which direction to move to reduce error'],res:'📎 3Blue1Brown "Essence of Calculus" Chapter 1 — YouTube. Pause and think.',check:'you can explain "derivative" using the slope-of-a-curve analogy with zero formulas.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Pandas — groupby, sort, merge, analysis',items:['groupby: df.groupby("City")["Salary"].mean() — average salary by city','sort_values: df.sort_values("Age", ascending=False)','value_counts: df["Grade"].value_counts()','Creating new columns: df["total"] = df["math"] + df["science"]','Applying functions: df["grade_letter"] = df["score"].apply(lambda x: "A" if x>=90 else "B")','Challenge: load the Titanic dataset. Find: survival rate by gender, average age by class, top 5 fares.'],res:'📎 Kaggle Pandas micro-course — Lesson 3 and 4',check:'you can answer "average salary by city for employees over 30" using groupby — from memory.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Chain rule + gradient intuition',items:['Chain rule: if y depends on u which depends on x, then dy/dx = (dy/du) × (du/dx)','Example: y = (3x+1)². Let u = 3x+1, y = u². dy/du = 2u, du/dx = 3. So dy/dx = 6(3x+1).','Think of it as: a change at the input ripples through to the output','Why ML needs this: a neural network is chained operations. Backprop IS the chain rule.','Gradient: for functions of multiple variables, the gradient is a vector of all partial derivatives','Gradient points in the direction of steepest increase. To minimize — go opposite direction.'],res:'📎 3Blue1Brown "Essence of Calculus" Chapters 2–3',check:'you can explain chain rule using the "ripple" analogy and draw what a gradient means on a surface.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Linear Regression — theory only today',items:['Regression = predict a continuous number (house price, exam score, temperature)','Linear regression finds the best straight line through your data: y = mx + b','m = slope (how much y changes per unit of x), b = y-intercept','How does it find the best line? Minimize the error between predicted and actual values','Error = predicted − actual. We use Mean Squared Error: average of (error)² values','Why squared? Small errors stay small. Large errors become very large → model focuses on fixing big mistakes','Today: draw 10 data points on paper. Draw a line through them by hand. That\'s linear regression.'],res:'📎 Andrew Ng ML Specialization Week 1 — Coursera (free audit)',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 4 Revision',topic:'Pandas + Derivatives + Linear Regression idea',items:['Pandas: load any CSV, answer 5 specific questions using only Pandas — no notes','Math: draw f(x)=x² and f(x)=x³. Draw tangent lines at 3 different x values each.','ML: explain linear regression using y=mx+b — what does each variable mean physically?','Teach back: explain MSE and why we square the errors to yourself out loud'],res:'',check:'you can load data, manipulate it, and explain linear regression with a drawn diagram — all without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Complete rest today.','Avoid screens as much as possible — your brain is processing this week\'s learning.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 5 ══════
+  w5:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Matplotlib — visualize your data',items:['import matplotlib.pyplot as plt','plt.plot(x, y) — line plot. plt.scatter(x, y) — scatter plot.','plt.bar(categories, values) — bar chart','Labels: plt.xlabel(), plt.ylabel(), plt.title()','plt.show() to display. plt.savefig("chart.png") to save.','Create: scatter plot of study hours vs exam score (make up 20 data points)','Add a trend line: np.polyfit(x,y,1) gives slope and intercept'],res:'📎 Kaggle "Data Visualization" micro-course — Lesson 1',check:'you can create a labelled scatter plot and bar chart from scratch without referencing any notes.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Probability — how likely is something?',items:['Probability: P(event) = favorable outcomes / total possible outcomes','Range: 0 (impossible) to 1 (certain)','P(A and B) = P(A) × P(B) — if A and B are independent','P(A or B) = P(A) + P(B) − P(A and B)','Conditional probability: P(A|B) = probability of A given B already happened','Example: P(pass exam | attended all classes) is different from P(pass exam)','Normal distribution: bell curve. Most values cluster near mean. Draw it on paper.'],res:'📎 StatQuest "Probability" video — YouTube. Very clear.',check:'you can compute P(A and B) and P(A|B) for a simple real-world example you create yourself.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Seaborn + real EDA visualization',items:['import seaborn as sns','sns.histplot(df["Age"]) — distribution of one variable','sns.scatterplot(x="feature1", y="feature2", data=df, hue="label")','sns.heatmap(df.corr(), annot=True) — correlation between all features','sns.boxplot(x="category", y="value", data=df) — spot outliers','sns.pairplot(df) — scatter matrix of every pair of features','Apply all of these to the Titanic dataset. What do you see?'],res:'📎 Kaggle "Data Visualization" micro-course — Lesson 3 and 4',check:'you can create a correlation heatmap and a pair plot on any dataset — from memory.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Mean, standard deviation, distributions',items:['Mean (μ): sum of all values / count. Center of the data.','Variance (σ²): average of squared distances from mean. How spread out?','Standard deviation (σ): square root of variance. Same units as data.','68-95-99.7 rule: 68% of data within 1 SD, 95% within 2 SD, 99.7% within 3 SD','Skewness: is the distribution symmetric or does it lean left/right?','Compute mean and SD on your exam score dataset using NumPy: np.mean(), np.std()','Plot a histogram and draw the normal curve on top'],res:'📎 StatQuest "Normal Distribution" — YouTube',check:'you can explain standard deviation using a real-world example you create, with no formulas.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Linear Regression in code — your first trained model',items:['from sklearn.linear_model import LinearRegression','from sklearn.model_selection import train_test_split','Load data (use Boston housing or any regression dataset)','X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)','model = LinearRegression(); model.fit(X_train, y_train)','y_pred = model.predict(X_test)','from sklearn.metrics import mean_absolute_error, mean_squared_error','Print MAE and RMSE. Plot y_test vs y_pred. Points near diagonal line = good model.'],res:'📎 Scikit-learn LinearRegression official docs',check:'your model trains, predicts, and you can interpret the MAE number meaningfully.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 5 Revision',topic:'Visualization + Probability + First ML model',items:['Python: load Titanic dataset, create: histogram of Age, heatmap of correlation, scatter of Fare vs Survived','Math: compute mean and SD of exam scores dataset from scratch then verify with NumPy','ML: retrain your linear regression from scratch — from loading data to computing RMSE','Teach back: explain the full ML workflow (load → split → train → predict → evaluate) out loud'],res:'',check:'you can go from raw CSV to trained linear regression model and evaluate it — completely from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Complete rest. You are halfway through Phase 1.','Optional: think about project ideas for next week. Just think — don\'t code yet.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 6 ══════
+  w6:{
+    mon:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Project Day 1 — Monday',topic:'Mini Project 1: Crop Yield Predictor — Data + Setup',items:['Download dataset from data.gov.in — search "crop production India" or use Kaggle agriculture dataset','Create project folder: crop_predictor/data/, crop_predictor/notebooks/','Load CSV in Jupyter. df.head(), df.shape, df.info() — understand every column','What columns exist? State, District, Season, Crop, Area, Production, Yield?','Handle missing values — dropna() or fillna with median for numeric columns','Print: how many rows, how many unique crops, which states have most data'],res:'📎 Kaggle "Crop Production in India" dataset — free download',check:''}]},
+    tue:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Project Day 2 — Tuesday',topic:'Mini Project 1: EDA + Visualizations',items:['Plot 1: histogram of Yield — what distribution does it have?','Plot 2: bar chart of top 10 crops by average yield','Plot 3: scatter plot of Area vs Production — is there a correlation?','Plot 4: correlation heatmap of all numeric columns','Write observations: which features seem most related to yield?','Select features for your model: Area, Annual_Rainfall, Fertilizer_Kg_per_Hectare (or equivalent)','Select label: Yield (or Production)'],res:'',check:''}]},
+    wed:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Project Day 3 — Wednesday',topic:'Mini Project 1: Build + Evaluate the Model',items:['Encode categorical columns: pd.get_dummies(df, columns=["Season","Crop"]) or LabelEncoder','from sklearn.model_selection import train_test_split','X = feature columns. y = yield column.','X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)','Train LinearRegression. Print MAE and RMSE.','Plot: actual vs predicted yield — scatter plot with diagonal line','Write interpretation: what does the MAE number mean in real terms (kg/hectare)?'],res:'',check:''}]},
+    thu:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Project Day 4 — Thursday',topic:'Mini Project 2: Student Performance — Data Generation',items:['This project uses synthetic data — you create it with Python','import numpy as np, pandas as pd, random','Generate 500 students with: attendance (50–100%), study_hours (1–8), sleep_hours (4–9), assignments_done (0–10), internal_marks (30–100)','final_grade = 0.3*attendance + 0.4*study_hours + 0.15*sleep_hours + 0.15*assignments + noise','noise = np.random.normal(0, 5, 500)','Save as CSV: students.csv','Load it back and do EDA: correlation heatmap, histograms of each feature'],res:'',check:''}]},
+    fri:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Project Day 5 — Friday',topic:'Mini Project 2: Train Model + Insights',items:['Train LinearRegression on student data','Which feature has highest coefficient? That factor matters most for grades.','Print model.coef_ with feature names — rank them by importance','Plot: scatter of study_hours vs final_grade. Add regression line.','Plot: correlation heatmap','Write a markdown cell: "Key findings: students who sleep X hours and study Y hours tend to score highest because..."','Push both projects to GitHub with proper folder structure'],res:'',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Phase 1 Complete Revision',topic:'Review everything from Weeks 1–6',items:['Write README.md for both projects — title, problem, dataset, model, results, insights','Full review: can you explain each week\'s key concept in 2 sentences without notes?','Weak spots check: which topic was hardest? Spend 30 min on just that one gap.','Teach back: explain the full Phase 1 journey from vectors to linear regression as one connected story'],res:'',check:'you can explain any Phase 1 concept and show both GitHub projects — with confidence.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Phase 1 Complete',topic:'Celebrate and rest',items:['You have completed Phase 1. Rest completely today.','You now know: Python, NumPy, Pandas, Matplotlib, Seaborn, Linear Regression, Vectors, Matrices, Derivatives, Probability.','Phase 2 starts whenever you\'re ready — there\'s no rush.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 7 ══════
+  w7:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Scikit-learn Pipelines — production-quality code',items:['from sklearn.pipeline import Pipeline','from sklearn.preprocessing import StandardScaler, OneHotEncoder','from sklearn.compose import ColumnTransformer','Problem: if you scale your data BEFORE splitting, your test set leaks into training. Pipeline prevents this.','Pipeline: all steps applied together on train. Same exact steps applied on test with no data leakage.','Example: Pipeline([("scaler", StandardScaler()), ("model", LinearRegression())])','pipe.fit(X_train, y_train) → pipe.predict(X_test)'],res:'📎 Scikit-learn Pipeline official docs — sklearn.org',check:'you can build a pipeline that scales features and trains a model — all in one object.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Gradient Descent — how a model actually learns',items:['Imagine you\'re blindfolded on a hilly landscape and want to reach the lowest valley','Feel the slope beneath your feet. If it goes down to your left → step left. That\'s gradient descent.','The "hill" = loss function (your model\'s error). Lowest valley = best model weights.','Learning rate (α): how big each step is. α=0.1 vs α=0.001 — very different behavior','Too big: you overshoot the valley and bounce around. Too small: takes 10,000 steps.','Draw: a parabola (loss curve). Mark starting point. Draw arrows showing gradient descent steps.','Update rule: weight = weight − α × gradient'],res:'📎 StatQuest "Gradient Descent Step by Step" — YouTube. Watch twice.',check:'you can draw a loss curve and simulate gradient descent on it by hand — marking each step.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Preprocessing + ColumnTransformer',items:['StandardScaler: transforms each feature to mean=0, std=1. Why? So no single feature dominates due to scale.','MinMaxScaler: scales to [0,1] range. Alternative to StandardScaler.','LabelEncoder: Dog→0, Cat→1, Bird→2. Only for ordinal or target columns.','OneHotEncoder: City=[Delhi,Mumbai,Hyderabad] → 3 binary columns. Better for nominal categories.','ColumnTransformer: apply different transforms to different columns in one step','Build complete: numeric columns → StandardScaler; categorical columns → OneHotEncoder; combine with ColumnTransformer'],res:'📎 Scikit-learn preprocessing guide — official docs',check:'you can apply StandardScaler to numeric and OneHotEncoder to categorical columns using ColumnTransformer.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Gradient descent variations + cost functions',items:['Batch gradient descent: use ALL training data to compute gradient per step. Slow but stable.','Stochastic GD: use ONE random sample per step. Fast but noisy.','Mini-batch GD: use N samples (e.g. 32). Best of both worlds. Used in deep learning.','MSE cost function: J(w) = (1/n) Σ(y_pred − y_actual)². Gradient = (2/n) Σ(y_pred−y_actual)×x','Implement gradient descent from scratch in Python: update weights manually using the formula','Compare your manual gradient descent result with sklearn LinearRegression — they should be similar'],res:'📎 Andrew Ng ML Specialization Week 1–2 — gradient descent sections',check:'you can implement gradient descent manually in Python and explain why learning rate matters.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Logistic Regression — classification theory',items:['Classification = predict a category, not a number (spam/not spam, pass/fail, click/no click)','Logistic regression outputs a PROBABILITY between 0 and 1','Sigmoid function: σ(z) = 1 / (1 + e^(-z)) — squishes any number to 0–1','If z is very large → σ(z) ≈ 1. If very negative → σ(z) ≈ 0.','Decision boundary: if probability > 0.5, predict class 1. Otherwise class 0.','Watch: logistic regression visualization showing decision boundary — just understand the idea','Today: only theory. Code comes in Week 8.'],res:'📎 Andrew Ng ML Specialization Week 3 — logistic regression sections',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 7 Revision',topic:'Pipelines + gradient descent + logistic theory',items:['Python: rebuild the full Pipeline (ColumnTransformer + model) from scratch on a new dataset','Math: draw a loss curve and simulate 5 gradient descent steps by hand with α=0.1','ML: explain logistic regression + sigmoid function using your own analogy','Compare: gradient descent from scratch vs sklearn LinearRegression on the same dataset'],res:'',check:'you can build a sklearn Pipeline, simulate gradient descent by hand, and explain sigmoid — all without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest today. Phase 2 has started — pace yourself.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 8 ══════
+  w8:{
+    mon:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML + Code — Monday',topic:'Logistic Regression in code',items:['from sklearn.linear_model import LogisticRegression','Dataset: use Titanic (predict survival) or any binary classification dataset','Build Pipeline: StandardScaler → LogisticRegression','model.fit(X_train, y_train); y_pred = model.predict(X_test)','model.predict_proba(X_test) — see the actual probabilities, not just 0/1','Print accuracy: model.score(X_test, y_test)','Visualize: plot predicted probabilities as a histogram for each class'],res:'📎 Scikit-learn LogisticRegression docs',check:'your logistic regression trains and predicts on Titanic data — and you can explain what predict_proba returns.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Cost functions for classification',items:['MSE doesn\'t work well for classification — here\'s why: probabilities near 0 or 1 get vanishingly small gradients','Cross-entropy loss (log loss): −[y log(p) + (1−y) log(1−p)]','If true label=1 and predicted probability=0.9 → small loss. If predicted=0.1 → huge loss.','This heavily penalizes confident wrong predictions — good!','Draw: plot −log(p) for p from 0 to 1. See how loss explodes as p→0.','Compute cross-entropy manually for 3 predictions. Verify with sklearn log_loss.'],res:'📎 StatQuest "Cross Entropy" — YouTube',check:'you can compute cross-entropy loss manually and explain why it penalizes confident wrong answers.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Evaluation metrics — beyond accuracy',items:['from sklearn.metrics import confusion_matrix, classification_report','Confusion matrix: 2×2 table of TP, FP, TN, FN','Accuracy = (TP+TN)/(TP+TN+FP+FN) — misleading when classes are imbalanced','Precision = TP/(TP+FP) — of all I predicted positive, how many were actually positive?','Recall = TP/(TP+FN) — of all actual positives, how many did I catch?','F1 = 2×(Precision×Recall)/(Precision+Recall) — balance between both','When to use which: Spam detection → high precision. Cancer detection → high recall.','Print confusion matrix as heatmap using sns.heatmap()'],res:'📎 StatQuest "ROC and AUC" — YouTube (17 min)',check:'given a confusion matrix, you can compute precision, recall, F1 by hand without any formula sheet.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'ROC curve + AUC intuition',items:['ROC = Receiver Operating Characteristic curve','X-axis: False Positive Rate. Y-axis: True Positive Rate (Recall).','Threshold at 0.5 gives one point on the curve. Move threshold → trace the curve.','Perfect model: curve goes to top-left corner. AUC = 1.0','Random model: diagonal line. AUC = 0.5','AUC = probability that model ranks a random positive higher than random negative','Plot ROC curve: from sklearn.metrics import roc_curve, auc','Compute AUC for your Titanic logistic regression model'],res:'📎 StatQuest ROC-AUC video — YouTube',check:'you can explain AUC intuitively and compute it for a classification model.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Overfitting + K-fold cross-validation',items:['Overfitting: model memorizes training data perfectly but fails completely on new data','Signs: training accuracy = 99%, test accuracy = 65%. Big gap = overfit.','Underfitting: model too simple. Both training and test accuracy are low.','K-fold cross-validation: split data into K equal parts. Train on K-1, test on 1. Repeat K times.','from sklearn.model_selection import cross_val_score','scores = cross_val_score(model, X, y, cv=5, scoring="accuracy")','print(f"CV Accuracy: {scores.mean():.3f} ± {scores.std():.3f}")','More reliable than a single train/test split'],res:'📎 StatQuest "Bias and Variance" — YouTube. Essential.',check:'you can run 5-fold cross-validation and explain why it\'s more reliable than one train/test split.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 8 Revision',topic:'Evaluation metrics + classification full review',items:['Code: train logistic regression on Titanic. Print: confusion matrix, precision, recall, F1, AUC. All from memory.','Math: compute cross-entropy loss manually for 3 predictions. Verify with sklearn log_loss.','ML: explain overfitting using the exam analogy. Explain K-fold.','Teach back: given a business problem (fraud detection), which metric would you optimize and why?'],res:'',check:'you can train logistic regression, evaluate with all metrics, and explain why each metric matters — without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest completely. Week 8 had a lot of dense content.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 9 ══════
+  w9:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Feature Engineering — create better inputs',items:['Feature engineering: create new columns from existing ones to give the model better signals','Example 1: from date columns → extract year, month, day_of_week, is_weekend','Example 2: from name → extract title (Mr, Mrs, Dr) using str.split()','Example 3: from price and area → create price_per_sqft = price/area','Binning: pd.cut(df["Age"], bins=[0,18,35,60,100], labels=["Child","Young","Middle","Senior"])','Interaction feature: df["study_sleep_ratio"] = df["study_hours"]/df["sleep_hours"]','Apply to Titanic: extract title from Name, create family_size = SibSp + Parch + 1'],res:'📎 Kaggle "Feature Engineering" micro-course — free',check:'you can create 3 meaningful new features from a raw dataset and justify why each might help the model.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Correlation — are two variables related?',items:['Correlation coefficient r: ranges from -1 to +1','r = +1: perfect positive — as x increases, y increases proportionally','r = -1: perfect negative — as x increases, y decreases','r = 0: no linear relationship between x and y','Pearson correlation: for linear relationships with normally distributed data','Spearman correlation: for non-linear or ranked data (more robust)','CRITICAL: correlation ≠ causation. Ice cream sales correlate with drowning → both caused by hot weather.','Compute in Python: df.corr(). Plot as heatmap.'],res:'📎 StatQuest "Correlation" — YouTube',check:'you can explain 3 real-world examples of correlation ≠ causation and compute a correlation matrix in Pandas.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'Decision Trees in code + visualization',items:['from sklearn.tree import DecisionTreeClassifier, export_graphviz','dt = DecisionTreeClassifier(max_depth=3, random_state=42)','dt.fit(X_train, y_train)','dt.predict(X_test), dt.score(X_test, y_test)','Feature importance: dt.feature_importances_ — which features did the tree use most?','Visualize: from sklearn.tree import plot_tree; plot_tree(dt, feature_names=X.columns, filled=True)','Vary max_depth from 1 to 10. Plot training vs test accuracy. See the overfitting curve.'],res:'📎 StatQuest "Decision Trees" YouTube Parts 1+2',check:'you can train a decision tree, visualize it, and identify overfitting by comparing training vs test accuracy.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Covariance matrix + Gini impurity',items:['Covariance: how much two variables change together. cov(X,Y) = E[(X-μx)(Y-μy)]','Positive covariance: both increase together. Negative: one increases, other decreases.','Covariance matrix: NxN table of covariances between all N features. Diagonal = variance.','Compute: np.cov(df.T) — covariance matrix of all features','Gini impurity: measures how "mixed" classes are at a tree node','Gini = 1 - Σ(p_i²). Pure node (one class): Gini=0. Mixed equally: Gini=0.5','Decision tree always splits on the feature+threshold that reduces Gini the most'],res:'📎 StatQuest "Gini Impurity" — YouTube',check:'you can compute Gini impurity manually for a node and explain what it means for the tree\'s splitting decision.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Combining everything — feature engineering + decision tree',items:['Take Titanic dataset. Apply all feature engineering from Monday.','Build Pipeline: feature engineering steps → StandardScaler → DecisionTreeClassifier','Use cross_val_score with cv=5 to evaluate','Compare: model WITHOUT new features vs model WITH new features — which AUC is higher?','Interpretation: which engineered features had highest importance?','Write: 3 sentences explaining what you learned from comparing both models'],res:'',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 9 Revision',topic:'Feature engineering + correlation + decision trees',items:['Feature engineering: create 3 new features on any dataset from scratch — justify each choice','Math: compute correlation matrix and Gini impurity manually for a simple example','ML: train decision tree with max_depth=3 and max_depth=10. Plot accuracy vs depth curve.','Teach back: explain feature engineering, Gini impurity, and correlation — all connected to one story'],res:'',check:'you can engineer features, train a decision tree, evaluate it with cross-validation, and explain Gini — without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest today. You\'re making real progress.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 10 ══════
+  w10:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 SQL — Monday',topic:'SQL basics — every ML role tests this',items:['SQL is used to extract and manipulate data before feeding it to your ML model','SELECT name, age FROM students WHERE age > 20','ORDER BY age DESC, LIMIT 10','GROUP BY city → SELECT city, AVG(salary) FROM employees GROUP BY city','COUNT(*), SUM(amount), MAX(score), MIN(score)','Practice on: sqlzoo.net or db-fiddle.com (free, browser-based)','Solve 5 LeetCode SQL Easy problems today: easy-175, 176, 182, 183, 184'],res:'📎 Mode Analytics SQL Tutorial (free) · SQLZoo.net · LeetCode SQL',check:'you can write SELECT + WHERE + GROUP BY + ORDER BY queries without any reference.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Regularization — prevent overfitting mathematically',items:['Overfitting: model has very large coefficients → it memorizes noise in training data','Regularization: add a penalty to the loss function that punishes large coefficients','L2 Ridge: Loss = MSE + λ Σ(w²). Shrinks all weights toward zero — keeps all features.','L1 Lasso: Loss = MSE + λ Σ|w|. Forces some weights to exactly zero → automatic feature selection.','λ (lambda): regularization strength. Large λ = more penalty = simpler model.','How to choose λ: cross-validate different values, pick the one with best validation score','In sklearn: Ridge(alpha=1.0), Lasso(alpha=0.1)'],res:'📎 StatQuest "Regularization" — YouTube (Ridge and Lasso videos)',check:'you can explain L1 vs L2 regularization using your own analogy and run both in sklearn.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 SQL — Wednesday',topic:'SQL JOINs + Window functions',items:['INNER JOIN: only rows that match in BOTH tables','LEFT JOIN: all rows from left table, matching rows from right (NULL if no match)','Example: SELECT s.name, g.grade FROM students s LEFT JOIN grades g ON s.id = g.student_id','Subquery: SELECT * FROM (SELECT city, AVG(salary) as avg_sal FROM emp GROUP BY city) WHERE avg_sal > 50000','Window functions: ROW_NUMBER() OVER (PARTITION BY city ORDER BY salary DESC)','Solve 5 more LeetCode SQL Medium problems today','Goal by end of Phase 2: solve SQL Medium consistently'],res:'',check:'you can write a query with JOIN and GROUP BY to answer a business question from two tables.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Hypothesis testing — is this result real or random?',items:['Null hypothesis (H0): "There is no real effect." Alternative (H1): "There is an effect."','p-value: the probability of seeing this result IF the null hypothesis were actually true','If p < 0.05: this result is unlikely to be random → reject H0 → effect is probably real','If p ≥ 0.05: we can\'t conclude anything — not enough evidence to reject H0','Example: ML A/B test. New model shows +3% accuracy. p=0.02 → real improvement. p=0.34 → probably random.','Compute t-test in Python: from scipy.stats import ttest_ind','Common pitfall: p < 0.05 does NOT prove H1 is true. It just means H0 is unlikely.'],res:'📎 StatQuest "p-values" — YouTube. Watch before any interview.',check:'you can explain p-value using your own example and know when to use it in ML context.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Random Forest + handling imbalanced data',items:['from sklearn.ensemble import RandomForestClassifier','Bagging: each tree trained on random sample (with replacement). Random features at each split.','rf = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)','Feature importance: rf.feature_importances_ — much more reliable than single tree','Imbalanced dataset: 95% class 0, 5% class 1 → model predicts 0 always → 95% accuracy, completely useless','Fix 1: RandomForestClassifier(class_weight="balanced")','Fix 2: from imblearn.over_sampling import SMOTE — creates synthetic minority samples','Always check class balance first: df["target"].value_counts()'],res:'📎 StatQuest "Random Forests" Parts 1+2 — YouTube',check:'you can train Random Forest, extract feature importances, and handle class imbalance — from memory.'}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 10 Revision',topic:'SQL + Regularization + Random Forest review',items:['SQL: write queries from scratch — top 3 products by revenue per category, using GROUP BY and window function','Math: explain Ridge vs Lasso using your own analogy. When would you prefer Lasso?','ML: train Random Forest on Titanic. Print feature importances. Compare with imbalanced vs balanced class weights.','Teach back: connect regularization math → sklearn Ridge/Lasso → when to use in practice'],res:'',check:'you can write complex SQL, apply regularization, and train Random Forest — all without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest today. Major project starts next week.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 11 ══════
+  w11:{
+    mon:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Major Project — Monday',topic:'Day 1: Data collection + setup',items:['Project: Hyderabad Rental Price Estimator','Create folder: rental_estimator/data/, notebooks/, app/, models/','Collect data: manually collect 100–200 rental listings from MagicBricks or 99acres for Hyderabad','OR: find a Hyderabad housing dataset on Kaggle','Columns needed: area_sqft, bhk, locality, furnishing, floor, monthly_rent','Load in Pandas. df.head(), df.shape, df.info(). Understand every column.','Note: which columns have missing values? Which need encoding?'],res:'📎 MagicBricks.com, 99acres.com, or Kaggle "Hyderabad house price" dataset',check:''}]},
+    tue:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Major Project — Tuesday',topic:'Day 2: EDA + Feature Engineering',items:['Plot: distribution of monthly_rent — is it skewed? Apply log transform if heavily skewed.','Plot: average rent by BHK type (1BHK vs 2BHK vs 3BHK) — bar chart','Plot: scatter of area_sqft vs monthly_rent — colored by BHK type','Plot: correlation heatmap of all numeric columns','Feature engineering: price_per_sqft = rent/area. floor_category (low/mid/high).','Encode: LabelEncoder for ordinal. OneHotEncoder for locality (many categories → use top 10 only).','Remove outliers: drop rows where rent > 3 standard deviations from mean'],res:'',check:''}]},
+    wed:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Major Project — Wednesday',topic:'Day 3: Build + Compare 2 models',items:['Build Pipeline 1: ColumnTransformer (scaler+encoder) → LinearRegression','Build Pipeline 2: ColumnTransformer → RandomForestRegressor(n_estimators=100)','Train both on X_train, y_train','Evaluate both with: MAE, RMSE, R² score','5-fold cross-validation for both: cross_val_score(pipe, X, y, cv=5, scoring="neg_mean_absolute_error")','Print comparison table: Model | Train MAE | Test MAE | R²','Which model is better? By how much?'],res:'',check:''}]},
+    thu:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Major Project — Thursday',topic:'Day 4: Streamlit UI',items:['pip install streamlit','Create app/app.py','import streamlit as st, joblib, pandas as pd','st.title("Hyderabad Rental Price Estimator")','st.number_input("Area (sq ft)", min_value=200, max_value=5000)','st.selectbox("BHK", [1,2,3,4])','st.selectbox("Furnishing", ["Unfurnished","Semi-furnished","Furnished"])','When user clicks "Estimate" button: create DataFrame from inputs → load model → predict → display result','Save trained model: import joblib; joblib.dump(best_model, "models/rental_model.pkl")'],res:'📎 docs.streamlit.io — Getting Started',check:''}]},
+    fri:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Major Project — Friday',topic:'Day 5: Deploy publicly',items:['Test app locally: streamlit run app.py','Fix any bugs. Test all input combinations.','Create requirements.txt: pip freeze > requirements.txt (trim to only what\'s needed)','Push to GitHub: git init, git add ., git commit, git push','Deploy on Streamlit Cloud (free): streamlit.io/cloud → connect GitHub repo → deploy','Get your public URL. Test it on your phone.','Share the URL with anyone. Your first deployed ML app is live.'],res:'📎 share.streamlit.io — free deployment',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Project Polish',topic:'Finalize and document',items:['Write a professional README.md: title, problem statement, tech stack, model comparison table, screenshot of app, live URL','Add feature importance chart from Random Forest to the app (if not done)','Add confidence range: show predicted rent ± some range based on model error','Test edge cases: what happens with extreme inputs?','Post on LinkedIn: "Built a Hyderabad Rental Price Estimator using Random Forest. Live URL: ..."'],res:'',check:'your app is live, README is complete, and you can demo it confidently to anyone.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Celebrate',topic:'You shipped a real deployed project',items:['Rest today. You have a live deployed ML application.','This goes on your resume and Fiverr profile today. Don\'t wait.','Phase 3 starts whenever you feel ready.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 12 ══════
+  w12:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'XGBoost — the competition winner',items:['pip install xgboost','from xgboost import XGBClassifier, XGBRegressor','Key idea: XGBoost builds trees sequentially. Each tree fixes the errors of the previous tree.','Boosting (XGBoost) vs Bagging (Random Forest): boosting is sequential and learns from mistakes','Key parameters: n_estimators=100, max_depth=6, learning_rate=0.1, subsample=0.8','xgb = XGBClassifier(n_estimators=100, max_depth=4, learning_rate=0.1)','Train on Titanic. Compare: Logistic Regression vs Random Forest vs XGBoost — who wins?','Feature importance: xgb.feature_importances_'],res:'📎 StatQuest XGBoost series — YouTube (4 videos)',check:'you can train XGBoost, compare it to Random Forest, and explain why boosting often wins.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Bayes theorem — update beliefs with evidence',items:['Bayes theorem: P(A|B) = P(B|A) × P(A) / P(B)','P(A) = prior probability (what you believed before any evidence)','P(A|B) = posterior probability (updated belief after seeing evidence B)','Classic example: medical test. Disease prevalence = 1%. Test is 99% accurate. You test positive.','Compute: P(disease|positive test). The answer is counterintuitive — only ~50%.','Why? Because disease is rare, so most positives are false positives.','Draw a tree diagram showing all 4 cases: (disease, +), (disease, -), (no disease, +), (no disease, -)'],res:'📎 StatQuest "Bayes Theorem" + 3Blue1Brown Bayes video — YouTube',check:'you can solve the medical test problem from scratch and explain why the result is counterintuitive.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday',topic:'SHAP — explain every prediction',items:['pip install shap','import shap','shap.initjs() — initialize JavaScript in Jupyter','explainer = shap.TreeExplainer(xgb_model)','shap_values = explainer.shap_values(X_test)','shap.summary_plot(shap_values, X_test) — global feature importance','shap.waterfall_plot(explainer(X_test)[0]) — explain one prediction','Interpret: for patient 1, sleep_hours pushed risk DOWN by 0.3, stress pushed it UP by 0.8','This is what separates deployable ML from research projects'],res:'📎 SHAP official docs — shap.readthedocs.io',check:'you can produce a SHAP waterfall chart and explain what each bar means in plain English.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'Hyperparameter tuning + cross-validation combined',items:['Hyperparameter: a setting you choose BEFORE training. Not learned from data.','Examples: n_estimators, max_depth, learning_rate, regularization λ','GridSearchCV: try every combination of specified values. Slow but thorough.','RandomizedSearchCV: try random sample of combinations. 5-10x faster.','Example: param_grid = {n_estimators:[50,100,200], max_depth:[3,5,7]}','GridSearchCV(xgb, param_grid, cv=5, scoring="roc_auc")','Best params: gs.best_params_. Best score: gs.best_score_','Important: never tune on test set. Always tune with cross-validation on training set only.'],res:'',check:'you can run RandomizedSearchCV on XGBoost and explain why tuning on test set is cheating.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'Model explainability — connect everything',items:['Run the full pipeline: XGBoost + SHAP + feature importance on your Titanic data','Global explanation: SHAP summary plot — which features matter most across all predictions?','Local explanation: pick 3 specific passengers. Show SHAP waterfall for each. Interpret.','Feature importance vs SHAP: what\'s the difference? Feature importance = average impact. SHAP = per-prediction impact.','Think: for your Hyderabad rental app — add SHAP explanation? Which features drive up rent most?','Document your findings in a Jupyter notebook with markdown cells explaining each plot'],res:'',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 12 Revision',topic:'XGBoost + Bayes + SHAP',items:['Train XGBoost from scratch on any classification dataset. Tune with RandomizedSearchCV.','Math: solve Bayes theorem problem — new scenario, not the medical test one.','SHAP: produce waterfall chart. Explain it in 3 sentences as if presenting to a non-technical audience.','Compare: Logistic Regression vs Random Forest vs XGBoost — when would you choose each?'],res:'',check:'you can train XGBoost, tune it, add SHAP explanations, and explain Bayes — all without notes.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest day',items:['Rest today. Final stretch begins next week.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 13 ══════
+  w13:{
+    mon:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Monday',topic:'Streamlit advanced + professional code structure',items:['OOP: write a class MLModel with fit(), predict(), evaluate() methods','Separate files: data.py (loading), features.py (engineering), train.py (model), app.py (UI)','requirements.txt: list exact versions of all libraries used','.gitignore: exclude data files, model pkl files, __pycache__, .env','joblib.dump(model, "model.pkl") — save. joblib.load("model.pkl") — load.','Add to Streamlit app: progress bar while model loads, error messages for bad inputs, download button for results'],res:'📎 Streamlit docs — Components and Layout sections',check:'your code is split into separate files and anyone can run it by just doing pip install -r requirements.txt.'}]},
+    tue:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Tuesday',topic:'Eigenvalues + eigenvectors — PCA foundation',items:['Eigenvector: a special vector that doesn\'t change DIRECTION when a matrix transformation is applied — it only stretches','Eigenvalue: how much that eigenvector gets stretched','If Av = λv, then v is an eigenvector and λ is its eigenvalue','Intuition: imagine stretching a rubber sheet. Most points move in complex ways. Eigenvectors only stretch.','PCA uses eigenvectors of the covariance matrix to find directions of maximum variance in your data','Draw: 2D data cloud. First eigenvector = direction of most spread. Second = perpendicular to first.','This is how PCA compresses 100 features to 10 while keeping maximum information'],res:'📎 3Blue1Brown "Eigenvectors and Eigenvalues" — YouTube. Pause often.',check:'you can explain eigenvectors using your own analogy and connect them to PCA\'s purpose.'}]},
+    wed:{badge:'Python',cls:'dp-py',blocks:[{cls:'tb-py',tag:'🐍 Python — Wednesday (Deploy)',topic:'PCA in code + deploy updated app',items:['from sklearn.decomposition import PCA','pca = PCA(n_components=2) — reduce to 2 dimensions for visualization','X_reduced = pca.fit_transform(X_scaled)','plt.scatter(X_reduced[:,0], X_reduced[:,1], c=y) — visualize clusters in 2D','pca.explained_variance_ratio_ — how much variance does each component explain?','sum(pca.explained_variance_ratio_[:10]) — how much do the first 10 explain?','Apply PCA to Titanic features. Visualize survivors vs non-survivors in 2D.','Update your Hyderabad rental app: add PCA visualization tab'],res:'📎 Scikit-learn PCA docs',check:'you can apply PCA, visualize results in 2D, and interpret explained variance ratio.'}]},
+    thu:{badge:'Math',cls:'dp-math',blocks:[{cls:'tb-math',tag:'📐 Math — Thursday',topic:'K-Means clustering math',items:['K-Means algorithm step by step:','1. Choose K random centroids','2. Assign each point to nearest centroid (use Euclidean distance)','3. Move each centroid to the mean position of all points assigned to it','4. Repeat 2–3 until centroids stop moving (convergence)','Inertia: sum of squared distances from each point to its centroid. Lower = better (but always decreases with more K).','Elbow method: plot inertia vs K. The "elbow" bend = optimal K.','Do K-Means by hand with 6 points and K=2 — take 2 iterations'],res:'📎 StatQuest "K-Means Clustering" — YouTube',check:'you can simulate K-Means by hand and explain the elbow method for choosing K.'}]},
+    fri:{badge:'ML',cls:'dp-ml',blocks:[{cls:'tb-ml',tag:'🤖 ML — Friday',topic:'K-Means in code + connect PCA',items:['from sklearn.cluster import KMeans','kmeans = KMeans(n_clusters=3, random_state=42)','kmeans.fit(X_scaled)','labels = kmeans.labels_ — cluster assignment per row','Plot elbow curve: inertia for K = 1 to 10','Apply PCA first to reduce dimensions → then K-Means to cluster → visualize in 2D','Real use case: segment your Titanic passengers into groups. What do the clusters look like?'],res:'📎 Scikit-learn KMeans docs',check:''}]},
+    sat:{badge:'Revision',cls:'dp-rev',blocks:[{cls:'tb-rev',tag:'📋 Saturday — Week 13 Revision',topic:'PCA + K-Means + professional code',items:['Code: apply PCA + K-Means pipeline on any dataset. Plot elbow curve. Visualize clusters.','Math: explain eigenvalues using rubber sheet analogy. Connect to PCA.','Professional code: refactor one of your old projects into proper file structure with classes.','Teach back: explain unsupervised learning (K-Means) vs supervised (Random Forest) — what\'s the fundamental difference?'],res:'',check:'you can apply PCA + K-Means, explain eigenvalues, and structure code professionally — from memory.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — Rest',topic:'Rest before final project',items:['Complete rest. The final project is next — it deserves your full energy.'],res:'',check:''}]}
+  },
+  // ══════ WEEK 14 ══════
+  w14:{
+    mon:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Monday',topic:'Day 1: Data generation + setup',items:['Project: Student Burnout Early Warning System','Create folder structure: burnout_system/data/, notebooks/, app/, models/, README.md','Generate synthetic dataset of 1500 students using Python:','import numpy as np, pandas as pd','Features: sleep_hours (4–9), study_hours (1–10), attendance_pct (50–100)','assignment_completion (0–100%), stress_level (1–10), extracurriculars (0–5), screen_time (1–8)','Create burnout_risk label: score = -0.3*sleep + 0.4*stress + 0.2*screen_time - 0.3*attendance + noise','burnout = "High" if score>threshold_high else "Medium" if score>threshold_low else "Low"','Save as CSV. Load back. Verify distributions look realistic.'],res:'',check:''}]},
+    tue:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Tuesday',topic:'Day 2: EDA + Feature Engineering',items:['df.describe() — check all ranges look realistic','Plot: distribution of each feature as histogram','Plot: burnout risk counts (how balanced are Low/Medium/High?)','Plot: correlation heatmap — which features correlate most with burnout?','Box plot: stress_level distribution by burnout risk level','Feature engineering: study_sleep_ratio = study_hours/sleep_hours (high ratio = concerning)','screen_study_ratio = screen_time/study_hours','Encode burnout labels: "Low"→0, "Medium"→1, "High"→2 using LabelEncoder'],res:'',check:''}]},
+    wed:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Wednesday',topic:'Day 3: Train XGBoost + tune + evaluate',items:['Split: X = all features, y = burnout_encoded. train_test_split 80/20.','Build Pipeline: StandardScaler → XGBClassifier','Tune with RandomizedSearchCV: n_estimators, max_depth, learning_rate','Best model: gs.best_estimator_. Best params: gs.best_params_','Evaluate: classification report (precision, recall, F1 for each class)','Confusion matrix heatmap: sns.heatmap(cm, annot=True, fmt="d")','Cross-validation: cross_val_score(best_model, X, y, cv=5, scoring="f1_macro")','Apply PCA → visualize 3 burnout clusters in 2D scatter'],res:'',check:''}]},
+    thu:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Thursday',topic:'Day 4: SHAP explainability',items:['explainer = shap.TreeExplainer(best_model.named_steps["xgbclassifier"])','X_test_scaled = best_model.named_steps["standardscaler"].transform(X_test)','shap_values = explainer.shap_values(X_test_scaled)','Global: shap.summary_plot(shap_values, X_test, feature_names=feature_names)','Local: for student at index 0 → shap.waterfall_plot(explainer(X_test_scaled)[0])','Interpretation: "For this student, high stress_level is the biggest risk factor (+0.82 toward High burnout)"','Save explainer object with joblib for use in the app'],res:'',check:''}]},
+    fri:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Friday',topic:'Day 5: Streamlit app',items:['app.py: st.title("🩺 Student Burnout Early Warning System")','Sidebar inputs: st.slider() for each feature','When "Check My Risk" button pressed: create DataFrame → load model → predict risk → predict_proba','Display risk level with color: st.success (Low), st.warning (Medium), st.error (High)','Show SHAP waterfall chart for the student\'s inputs using st.pyplot()','Personalized suggestions: if sleep_hours < 6 → "Sleep is your biggest risk factor — try a 10pm cutoff"','If stress_level > 8 → "Consider reducing extracurriculars or talking to a mentor"'],res:'',check:''}]},
+    sat:{badge:'Project',cls:'dp-proj',blocks:[{cls:'tb-proj',tag:'🚀 Final Project — Saturday',topic:'Day 6: Deploy + polish + publish',items:['Test app locally with 10 different student profiles — does it behave sensibly?','Push to GitHub: git add . && git commit -m "Final project: Student Burnout System" && git push','Deploy on Streamlit Cloud: connect repo → deploy → get public URL','Write professional README.md: project overview, features, tech stack, screenshots, live URL','Test on phone — does it look good on mobile?','Add to Fiverr profile: update your bio to mention "Deployed ML applications with explainability (SHAP)"','Post on LinkedIn with live URL and key insights'],res:'',check:'app is live, README is complete, and you can demo the full project in under 3 minutes to anyone.'}]},
+    sun:{badge:'Rest',cls:'dp-rest',blocks:[{cls:'tb-rest',tag:'☀️ Sunday — YOU COMPLETED THE PLAN',topic:'Celebrate. Rest. Reflect.',items:['You have completed the entire plan.','You now know: Python, NumPy, Pandas, Matplotlib, Seaborn, SQL, Scikit-learn, XGBoost, SHAP, Streamlit, Linear Algebra, Calculus, Probability, Statistics, Bayes theorem, PCA, K-Means.','You have 4 GitHub projects — 2 of them deployed publicly.','Update your resume today. Update your Fiverr gig today.','You are ready to apply for AI Engineer internships and ML roles.','Take a proper rest day. You earned it.'],res:'',check:''}]}
+  }
+};
+
+function showPhase(id) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.ph-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-' + id).classList.add('on');
+  event.target.classList.add('on');
+}
+
+function toggleWeek(hdr) {
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.wchev');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+function showDay(week, day) {
+  const data = days[week] && days[week][day];
+  const panel = document.getElementById(week + '-panel');
+  const strip = document.getElementById(week + '-strip');
+
+  // update active day highlight
+  strip.querySelectorAll('.ws-day').forEach(d => d.classList.remove('active-day'));
+  event.currentTarget.classList.add('active-day');
+
+  if (!data) { panel.innerHTML = '<div class="tip">No data for this day yet.</div>'; return; }
+
+  let html = `<div class="dp-header"><div class="dp-dayname">${day.charAt(0).toUpperCase()+day.slice(1)}</div><div class="dp-badge ${data.cls}">${data.badge}</div></div>`;
+
+  data.blocks.forEach(b => {
+    html += `<div class="task-block ${b.cls}">
+      <div class="tb-tag">${b.tag}</div>
+      <div class="tb-topic">${b.topic}</div>
+      <ul class="tb-items">${b.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+      ${b.res ? `<div class="tb-res">${b.res}</div>` : ''}
+      ${b.check ? `<div class="tb-check">${b.check}</div>` : ''}
+    </div>`;
+  });
+
+  panel.innerHTML = html;
+}
+</script>
+</body>
+</html>

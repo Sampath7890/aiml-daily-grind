@@ -1,0 +1,591 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0D1117;--card:#161B27;--card2:#1C2235;--border:#252D42;
+  --text:#E8EDF8;--muted:#7A839E;--faint:#353D58;
+  --rev:#E2D44A;--rev-bg:rgba(226,212,74,0.08);--rev-bd:rgba(226,212,74,0.25);
+  --py:#4A90E2;--py-bg:rgba(74,144,226,0.10);--py-bd:rgba(74,144,226,0.28);
+  --ml:#4ACD8A;--ml-bg:rgba(74,205,138,0.10);--ml-bd:rgba(74,205,138,0.28);
+  --math:#E2944A;--math-bg:rgba(226,148,74,0.10);--math-bd:rgba(226,148,74,0.28);
+  --purple:#A855F7;--purple-bg:rgba(168,85,247,0.10);--purple-bd:rgba(168,85,247,0.28);
+  --pink:#F472B6;--pink-bg:rgba(244,114,182,0.10);--pink-bd:rgba(244,114,182,0.28);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.6;}
+
+.hero{background:linear-gradient(135deg,#0D1117,#1A1A00,#0D1117);padding:28px 24px 22px;border-bottom:1px solid var(--border);}
+.hero-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--rev);background:var(--rev-bg);border:1px solid var(--rev-bd);padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:12px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;}
+.hero-title span{color:var(--rev);}
+.hero-sub{font-size:12px;color:var(--muted);}
+
+.nav{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 16px;position:sticky;top:0;z-index:20;}
+.nav::-webkit-scrollbar{display:none;}
+.nb{font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:11px 12px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.nb:hover{color:var(--text);}
+.nb.on{color:var(--rev);border-bottom-color:var(--rev);}
+
+.content{padding:20px 24px 60px;max-width:720px;margin:0 auto;}
+.tab{display:none;}.tab.on{display:block;}
+
+.sh{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.sh-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+
+.code-block{background:#0A0E1A;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;overflow-x:auto;}
+.c-comment{color:#4A5568;}.c-kw{color:#A78BFA;}.c-str{color:#4ACD8A;}.c-num{color:#F472B6;}.c-fn{color:#4A90E2;}.c-var{color:#E2944A;}
+
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+.step-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.step-head:hover{background:var(--card2);}
+.step-n{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;flex-shrink:0;width:32px;}
+.step-title{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.step-tag{font-family:'DM Mono',monospace;font-size:9px;padding:3px 10px;border-radius:6px;flex-shrink:0;}
+.step-chev{color:var(--faint);transition:transform .3s;flex-shrink:0;}
+.step-chev.open{transform:rotate(180deg);}
+.step-body{display:none;border-top:1px solid var(--border);padding:18px;}
+.step-body.open{display:block;}
+
+.checklist{display:flex;flex-direction:column;gap:7px;margin:10px 0;}
+.check-item{display:flex;align-items:flex-start;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:border-color .2s;}
+.check-item:hover{border-color:var(--rev-bd);}
+.check-item.done{background:var(--rev-bg);border-color:var(--rev-bd);}
+.check-box{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--faint);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:all .2s;}
+.check-item.done .check-box{background:var(--rev);border-color:var(--rev);color:#000;font-weight:700;}
+.check-text{font-size:12px;color:var(--muted);}
+.check-item.done .check-text{color:var(--rev);text-decoration:line-through;}
+
+.tip{background:var(--rev-bg);border:1px dashed var(--rev-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+.tip strong{color:var(--rev);}
+.tip-ml{background:var(--ml-bg);border:1px dashed var(--ml-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+.tip-ml strong{color:var(--ml);}
+.tip-py{background:var(--py-bg);border:1px dashed var(--py-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+.tip-py strong{color:var(--py);}
+
+.ex-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px;}
+.ex-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.ex-answer{margin-top:8px;background:#0A0E1A;border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--rev);display:none;line-height:1.8;}
+.show-btn{margin-top:6px;font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid var(--rev-bd);background:var(--rev-bg);color:var(--rev);cursor:pointer;font-family:'Inter',sans-serif;}
+
+.prog-wrap{background:var(--card2);border-radius:6px;height:8px;overflow:hidden;margin:12px 0 4px;}
+.prog{height:100%;background:linear-gradient(90deg,var(--rev),var(--ml));border-radius:6px;width:0%;transition:width .6s;}
+.prog-label{font-size:11px;color:var(--muted);text-align:center;}
+
+.badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.b-pandas{background:var(--py-bg);color:var(--py);border:1px solid var(--py-bd);}
+.b-stats{background:var(--math-bg);color:var(--math);border:1px solid var(--math-bd);}
+.b-viz{background:var(--ml-bg);color:var(--ml);border:1px solid var(--ml-bd);}
+.b-clean{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd);}
+.b-hard{background:var(--pink-bg);color:var(--pink);border:1px solid var(--pink-bd);}
+
+.concept-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
+.concept-row:last-child{border-bottom:none;}
+.cr-tool{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--py);flex-shrink:0;width:160px;}
+.cr-desc{font-size:12px;color:var(--muted);}
+.cr-why{font-size:10px;color:var(--ml);margin-top:2px;}
+
+.workflow-step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);}
+.workflow-step:last-child{border-bottom:none;}
+.ws-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--rev);flex-shrink:0;width:28px;line-height:1;}
+.ws-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.ws-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.ws-code{font-family:'DM Mono',monospace;font-size:11px;color:var(--py);margin-top:4px;}
+
+.section-heading{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">EDA Revision · Based on what you've learned</div>
+  <div class="hero-title">Complete <span>EDA Revision Plan</span></div>
+  <div class="hero-sub">Pandas · NumPy · Matplotlib · Seaborn · Statistics · All in one structured plan</div>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="show('workflow')">EDA Workflow</button>
+  <button class="nb" onclick="show('tools')">Tools Cheatsheet</button>
+  <button class="nb" onclick="show('steps')">Step-by-Step</button>
+  <button class="nb" onclick="show('memory')">Memory Tests</button>
+  <button class="nb" onclick="show('challenge')">Final Challenge</button>
+</div>
+
+<div class="content">
+
+<!-- ═══ WORKFLOW TAB ═══ -->
+<div class="tab on" id="tab-workflow">
+  <div class="sh">The 7-step EDA workflow</div>
+  <div class="sh-sub">Every EDA you ever do — on any dataset — follows these 7 steps in order</div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;">
+    <div class="workflow-step">
+      <div class="ws-num">1</div>
+      <div>
+        <div class="ws-title">Load and first look</div>
+        <div class="ws-desc">Get a feel for the data. How big is it? What columns exist? What types?</div>
+        <div class="ws-code">df = pd.read_csv("file.csv")<br>df.head() · df.shape · df.columns · df.dtypes · df.info()</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">2</div>
+      <div>
+        <div class="ws-title">Check missing values</div>
+        <div class="ws-desc">Which columns have gaps? How many? Should you drop or fill them?</div>
+        <div class="ws-code">df.isnull().sum() · df.isnull().sum() / len(df) * 100<br>df.dropna() · df.fillna(df.median())</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">3</div>
+      <div>
+        <div class="ws-title">Understand distributions</div>
+        <div class="ws-desc">For each numeric column: what is the range, mean, std? Is it normal, skewed, bimodal?</div>
+        <div class="ws-code">df.describe() · sns.histplot(df["col"]) · sns.boxplot()</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">4</div>
+      <div>
+        <div class="ws-title">Detect outliers</div>
+        <div class="ws-desc">Are there extreme values that will break your model? Boxplot shows them clearly.</div>
+        <div class="ws-code">sns.boxplot(x="category", y="value", data=df)<br>df[df["Fare"] > df["Fare"].quantile(0.99)]</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">5</div>
+      <div>
+        <div class="ws-title">Explore relationships</div>
+        <div class="ws-desc">How do features relate to each other and to the target? Scatter, pairplot, groupby.</div>
+        <div class="ws-code">sns.scatterplot(x="f1", y="f2", hue="target", data=df)<br>df.groupby("category")["target"].mean()</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">6</div>
+      <div>
+        <div class="ws-title">Check correlations</div>
+        <div class="ws-desc">Which features are most correlated with the target? Which features are redundant?</div>
+        <div class="ws-code">df.corr() · sns.heatmap(df.corr(), annot=True, cmap="coolwarm")<br>df.corr()["target"].sort_values(ascending=False)</div>
+      </div>
+    </div>
+    <div class="workflow-step">
+      <div class="ws-num">7</div>
+      <div>
+        <div class="ws-title">Write down insights + feature decisions</div>
+        <div class="ws-desc">Before modeling: write which features to use, which to drop, which need transformation. EDA is useless if you don't extract conclusions.</div>
+        <div class="ws-code"># Example insights to write:<br># Feature X has 30% missing — fill with median<br># Feature Y has outliers — cap at 99th percentile<br># Features A and B are 0.95 correlated — keep only A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-ml"><strong>Most important rule of EDA:</strong> Never touch sklearn until you have completed all 7 steps. A model trained on unclean, unexplored data will always underperform. Real data scientists spend 60–70% of project time on EDA and cleaning — not modeling.</div>
+</div>
+
+<!-- ═══ TOOLS TAB ═══ -->
+<div class="tab" id="tab-tools">
+  <div class="sh">Complete EDA tools cheatsheet</div>
+  <div class="sh-sub">Everything you've learned — organized by EDA purpose</div>
+
+  <div class="section-heading">📦 Pandas — data loading and exploration</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div class="concept-row"><div class="cr-tool">pd.read_csv()</div><div><div class="cr-desc">Load any CSV file into a DataFrame</div><div class="cr-why">→ Step 1 of every EDA</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.head(n)</div><div><div class="cr-desc">First n rows — always run this first</div><div class="cr-why">→ Get a feel for the data</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.shape</div><div><div class="cr-desc">Tuple of (rows, columns)</div><div class="cr-why">→ How big is the dataset?</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.info()</div><div><div class="cr-desc">Column names, types, non-null counts</div><div class="cr-why">→ Spot missing values and wrong types instantly</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.describe()</div><div><div class="cr-desc">Mean, std, min, max, quartiles for all numeric columns</div><div class="cr-why">→ Statistics summary in one line</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.isnull().sum()</div><div><div class="cr-desc">Count of missing values per column</div><div class="cr-why">→ Find which columns need cleaning</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.fillna(value)</div><div><div class="cr-desc">Fill missing values — use median for numeric, mode for categorical</div><div class="cr-why">→ Clean before modeling</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.dropna()</div><div><div class="cr-desc">Drop any row with a missing value</div><div class="cr-why">→ Use only when very few rows are missing</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df["col"].value_counts()</div><div><div class="cr-desc">Count of each unique value — for categorical columns</div><div class="cr-why">→ Understand class distribution</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.groupby("col")["target"].mean()</div><div><div class="cr-desc">Average target per category</div><div class="cr-why">→ Discover which categories drive the target</div></div></div>
+    <div class="concept-row"><div class="cr-tool">df.corr()</div><div><div class="cr-desc">Correlation matrix — all numeric columns vs each other</div><div class="cr-why">→ Most important for feature selection</div></div></div>
+  </div>
+
+  <div class="section-heading">📊 Matplotlib — basic charts</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div class="concept-row"><div class="cr-tool">plt.plot(x, y)</div><div><div class="cr-desc">Line chart — trends over time, training loss curve</div></div></div>
+    <div class="concept-row"><div class="cr-tool">plt.scatter(x, y)</div><div><div class="cr-desc">Two numeric features — see relationship + spread</div></div></div>
+    <div class="concept-row"><div class="cr-tool">plt.bar(categories, values)</div><div><div class="cr-desc">Compare counts or averages across categories</div></div></div>
+    <div class="concept-row"><div class="cr-tool">plt.hist(data, bins=n)</div><div><div class="cr-desc">Distribution of one numeric column</div></div></div>
+    <div class="concept-row"><div class="cr-tool">plt.subplot(r, c, n)</div><div><div class="cr-desc">Multiple charts in one figure — EDA reports</div></div></div>
+    <div class="concept-row"><div class="cr-tool">np.polyfit(x, y, 1)</div><div><div class="cr-desc">Returns slope and intercept of trend line</div></div></div>
+  </div>
+
+  <div class="section-heading">🎨 Seaborn — statistical charts</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div class="concept-row"><div class="cr-tool">sns.histplot(df["col"], kde=True)</div><div><div class="cr-desc">Distribution + smooth curve. Is it normal or skewed?</div><div class="cr-why">→ Step 3: understand distributions</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.boxplot(x="cat", y="num")</div><div><div class="cr-desc">Median, spread, and outliers per category</div><div class="cr-why">→ Step 4: detect outliers</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.violinplot()</div><div><div class="cr-desc">Boxplot + distribution shape combined</div><div class="cr-why">→ More information than boxplot alone</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.scatterplot(hue="label")</div><div><div class="cr-desc">Two features with category color-coding</div><div class="cr-why">→ Step 5: explore relationships</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.heatmap(df.corr(), annot=True)</div><div><div class="cr-desc">All correlations visualized — red=positive, blue=negative</div><div class="cr-why">→ Step 6: most important chart before modeling</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.pairplot(df, hue="target")</div><div><div class="cr-desc">All scatter plots + distributions in one figure</div><div class="cr-why">→ Best first overview of any new dataset</div></div></div>
+    <div class="concept-row"><div class="cr-tool">sns.countplot(x="col", hue="target")</div><div><div class="cr-desc">Counts per category, split by target</div><div class="cr-why">→ Class imbalance + category analysis</div></div></div>
+  </div>
+
+  <div class="section-heading">📐 Statistics you know — used in EDA</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div class="concept-row"><div class="cr-tool">mean = np.mean(x)</div><div><div class="cr-desc">Central tendency — where most values cluster</div></div></div>
+    <div class="concept-row"><div class="cr-tool">std = np.std(x)</div><div><div class="cr-desc">Spread — how far values are from mean. Small std = tight cluster.</div></div></div>
+    <div class="concept-row"><div class="cr-tool">correlation (r)</div><div><div class="cr-desc">-1 to +1. Close to ±1 = strong. Close to 0 = no relationship.</div></div></div>
+    <div class="concept-row"><div class="cr-tool">Normal distribution</div><div><div class="cr-desc">68% within 1σ. 95% within 2σ. Values beyond 3σ = likely outliers.</div></div></div>
+    <div class="concept-row"><div class="cr-tool">P(A|B) conditional prob.</div><div><div class="cr-desc">How does knowing B change the probability of A? Used in feature analysis.</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ STEP-BY-STEP TAB ═══ -->
+<div class="tab" id="tab-steps">
+  <div class="sh">Step-by-step EDA code — from memory</div>
+  <div class="sh-sub">Open a new file called eda_revision.py — write all of this from memory</div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--py)">1</span>
+      <span class="step-title">Load + first look</span>
+      <span class="step-tag" style="background:var(--py-bg);color:var(--py);">Pandas</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd<br>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np<br>
+<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt<br>
+<span class="c-kw">import</span> seaborn <span class="c-kw">as</span> sns<br>
+sns.<span class="c-fn">set_theme</span>(style=<span class="c-str">"darkgrid"</span>)<br>
+<br>
+<span class="c-var">df</span> = pd.<span class="c-fn">read_csv</span>(<span class="c-str">"titanic.csv"</span>)<br>
+<br>
+<span class="c-comment"># Always run these 5 first on any new dataset</span><br>
+<span class="c-fn">print</span>(<span class="c-str">"Shape:"</span>, <span class="c-var">df</span>.shape)<br>
+<span class="c-fn">print</span>(<span class="c-str">"\nFirst 5 rows:"</span>)<br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.<span class="c-fn">head</span>())<br>
+<span class="c-fn">print</span>(<span class="c-str">"\nData types:"</span>)<br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.dtypes)<br>
+<span class="c-fn">print</span>(<span class="c-str">"\nStatistics:"</span>)<br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.<span class="c-fn">describe</span>())
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--purple)">2</span>
+      <span class="step-title">Missing values — find and fix</span>
+      <span class="step-tag" style="background:var(--purple-bg);color:var(--purple);">Cleaning</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-comment"># How many missing per column?</span><br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.<span class="c-fn">isnull</span>().<span class="c-fn">sum</span>())<br>
+<br>
+<span class="c-comment"># Percentage missing</span><br>
+<span class="c-fn">print</span>((<span class="c-var">df</span>.<span class="c-fn">isnull</span>().<span class="c-fn">sum</span>() / <span class="c-fn">len</span>(<span class="c-var">df</span>)) * <span class="c-num">100</span>)<br>
+<br>
+<span class="c-comment"># Fix: fill numeric with median, categorical with mode</span><br>
+<span class="c-var">df</span>[<span class="c-str">"Age"</span>] = <span class="c-var">df</span>[<span class="c-str">"Age"</span>].<span class="c-fn">fillna</span>(<span class="c-var">df</span>[<span class="c-str">"Age"</span>].<span class="c-fn">median</span>())<br>
+<span class="c-var">df</span>[<span class="c-str">"Embarked"</span>] = <span class="c-var">df</span>[<span class="c-str">"Embarked"</span>].<span class="c-fn">fillna</span>(<span class="c-var">df</span>[<span class="c-str">"Embarked"</span>].<span class="c-fn">mode</span>()[<span class="c-num">0</span>])<br>
+<br>
+<span class="c-comment"># Verify: should all be 0 now</span><br>
+<span class="c-fn">print</span>(<span class="c-str">"After cleaning:"</span>, <span class="c-var">df</span>[<span class="c-str">"Age"</span>].<span class="c-fn">isnull</span>().<span class="c-fn">sum</span>())
+      </div>
+      <div class="tip" style="margin-top:10px;"><strong>Decision rule:</strong> Column missing &lt;10% → fill with median. Missing 10–40% → fill and add a binary "was_missing" column. Missing &gt;40% → consider dropping the column entirely.</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--ml)">3</span>
+      <span class="step-title">Distributions — what does each column look like?</span>
+      <span class="step-tag" style="background:var(--ml-bg);color:var(--ml);">Visualization</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-comment"># Distribution of a numeric column</span><br>
+plt.<span class="c-fn">figure</span>(figsize=(<span class="c-num">12</span>, <span class="c-num">4</span>))<br>
+<br>
+plt.<span class="c-fn">subplot</span>(<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">1</span>)<br>
+sns.<span class="c-fn">histplot</span>(<span class="c-var">df</span>[<span class="c-str">"Age"</span>], bins=<span class="c-num">30</span>, kde=<span class="c-kw">True</span>)<br>
+plt.<span class="c-fn">title</span>(<span class="c-str">"Age Distribution"</span>)<br>
+<br>
+plt.<span class="c-fn">subplot</span>(<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">2</span>)<br>
+sns.<span class="c-fn">histplot</span>(<span class="c-var">df</span>[<span class="c-str">"Fare"</span>], bins=<span class="c-num">30</span>, kde=<span class="c-kw">True</span>, color=<span class="c-str">"coral"</span>)<br>
+plt.<span class="c-fn">title</span>(<span class="c-str">"Fare Distribution"</span>)<br>
+<br>
+plt.<span class="c-fn">tight_layout</span>(); plt.<span class="c-fn">show</span>()<br>
+<br>
+<span class="c-comment"># For categorical columns — value counts</span><br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>[<span class="c-str">"Survived"</span>].<span class="c-fn">value_counts</span>())<br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>[<span class="c-str">"Pclass"</span>].<span class="c-fn">value_counts</span>())
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--math)">4</span>
+      <span class="step-title">Outliers — spot and handle them</span>
+      <span class="step-tag" style="background:var(--math-bg);color:var(--math);">Cleaning</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-comment"># Boxplot to spot outliers visually</span><br>
+plt.<span class="c-fn">figure</span>(figsize=(<span class="c-num">10</span>, <span class="c-num">4</span>))<br>
+sns.<span class="c-fn">boxplot</span>(<span class="c-var">x</span>=<span class="c-str">"Pclass"</span>, <span class="c-var">y</span>=<span class="c-str">"Fare"</span>, <span class="c-var">data</span>=<span class="c-var">df</span>)<br>
+plt.<span class="c-fn">title</span>(<span class="c-str">"Fare Outliers by Class"</span>)<br>
+plt.<span class="c-fn">show</span>()<br>
+<br>
+<span class="c-comment"># Find outliers numerically — 99th percentile</span><br>
+<span class="c-var">fare_99</span> = <span class="c-var">df</span>[<span class="c-str">"Fare"</span>].<span class="c-fn">quantile</span>(<span class="c-num">0.99</span>)<br>
+<span class="c-var">outliers</span> = <span class="c-var">df</span>[<span class="c-var">df</span>[<span class="c-str">"Fare"</span>] > <span class="c-var">fare_99</span>]<br>
+<span class="c-fn">print</span>(<span class="c-str">f"Outliers above 99th percentile: {len(outliers)}"</span>)<br>
+<br>
+<span class="c-comment"># Cap outliers instead of dropping</span><br>
+<span class="c-var">df</span>[<span class="c-str">"Fare"</span>] = <span class="c-var">df</span>[<span class="c-str">"Fare"</span>].<span class="c-fn">clip</span>(upper=<span class="c-var">fare_99</span>)
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--py)">5</span>
+      <span class="step-title">Relationships — feature vs target</span>
+      <span class="step-tag" style="background:var(--ml-bg);color:var(--ml);">Visualization</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-comment"># Groupby — target mean per category</span><br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.<span class="c-fn">groupby</span>(<span class="c-str">"Sex"</span>)[<span class="c-str">"Survived"</span>].<span class="c-fn">mean</span>())<br>
+<span class="c-fn">print</span>(<span class="c-var">df</span>.<span class="c-fn">groupby</span>(<span class="c-str">"Pclass"</span>)[<span class="c-str">"Survived"</span>].<span class="c-fn">mean</span>())<br>
+<br>
+<span class="c-comment"># Scatter of two features colored by target</span><br>
+plt.<span class="c-fn">figure</span>(figsize=(<span class="c-num">8</span>, <span class="c-num">5</span>))<br>
+sns.<span class="c-fn">scatterplot</span>(<span class="c-var">x</span>=<span class="c-str">"Age"</span>, <span class="c-var">y</span>=<span class="c-str">"Fare"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">hue</span>=<span class="c-str">"Survived"</span>, <span class="c-var">data</span>=<span class="c-var">df</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">palette</span>=<span class="c-str">"Set1"</span>, <span class="c-var">alpha</span>=<span class="c-num">0.6</span>)<br>
+plt.<span class="c-fn">title</span>(<span class="c-str">"Age vs Fare by Survival"</span>)<br>
+plt.<span class="c-fn">show</span>()
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--math)">6</span>
+      <span class="step-title">Correlation — find important features</span>
+      <span class="step-tag" style="background:var(--math-bg);color:var(--math);">Statistics</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-var">numeric_cols</span> = [<span class="c-str">"Survived"</span>,<span class="c-str">"Pclass"</span>,<span class="c-str">"Age"</span>,<span class="c-str">"SibSp"</span>,<span class="c-str">"Parch"</span>,<span class="c-str">"Fare"</span>]<br>
+<span class="c-var">corr</span> = <span class="c-var">df</span>[<span class="c-var">numeric_cols</span>].<span class="c-fn">corr</span>()<br>
+<br>
+<span class="c-comment"># Visualize all correlations</span><br>
+plt.<span class="c-fn">figure</span>(figsize=(<span class="c-num">8</span>, <span class="c-num">6</span>))<br>
+sns.<span class="c-fn">heatmap</span>(<span class="c-var">corr</span>, <span class="c-var">annot</span>=<span class="c-kw">True</span>, <span class="c-var">fmt</span>=<span class="c-str">".2f"</span>, <span class="c-var">cmap</span>=<span class="c-str">"coolwarm"</span>, <span class="c-var">center</span>=<span class="c-num">0</span>)<br>
+plt.<span class="c-fn">title</span>(<span class="c-str">"Feature Correlation Matrix"</span>)<br>
+plt.<span class="c-fn">show</span>()<br>
+<br>
+<span class="c-comment"># Rank features by correlation with target</span><br>
+<span class="c-fn">print</span>(<span class="c-str">"Feature importance (correlation with Survived):"</span>)<br>
+<span class="c-fn">print</span>(<span class="c-var">corr</span>[<span class="c-str">"Survived"</span>].<span class="c-fn">abs</span>().<span class="c-fn">sort_values</span>(ascending=<span class="c-kw">False</span>))
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-head" onclick="toggleStep(this)">
+      <span class="step-n" style="color:var(--rev)">7</span>
+      <span class="step-title">Write insights — pairplot + conclusions</span>
+      <span class="step-tag" style="background:var(--rev-bg);color:var(--rev);">Summary</span>
+      <span class="step-chev">▾</span>
+    </div>
+    <div class="step-body">
+      <div class="code-block">
+<span class="c-comment"># Pairplot — everything vs everything</span><br>
+<span class="c-var">subset</span> = <span class="c-var">df</span>[[<span class="c-str">"Age"</span>,<span class="c-str">"Fare"</span>,<span class="c-str">"Pclass"</span>,<span class="c-str">"Survived"</span>]].copy()<br>
+<span class="c-var">subset</span>[<span class="c-str">"Survived"</span>] = <span class="c-var">subset</span>[<span class="c-str">"Survived"</span>].<span class="c-fn">astype</span>(<span class="c-str">"str"</span>)<br>
+sns.<span class="c-fn">pairplot</span>(<span class="c-var">subset</span>, <span class="c-var">hue</span>=<span class="c-str">"Survived"</span>, <span class="c-var">palette</span>=<span class="c-str">"Set1"</span>)<br>
+plt.<span class="c-fn">show</span>()<br>
+<br>
+<span class="c-comment"># Write your conclusions here as comments:</span><br>
+<span class="c-comment"># Insight 1: ___</span><br>
+<span class="c-comment"># Insight 2: ___</span><br>
+<span class="c-comment"># Features to use for model: ___</span><br>
+<span class="c-comment"># Features to drop: ___</span><br>
+<span class="c-comment"># Columns needing transformation: ___</span>
+      </div>
+      <div class="tip-ml"><strong>These comment lines are not optional.</strong> Writing insights forces you to think — not just run code. Every ML project has an EDA writeup. This is yours.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MEMORY TESTS TAB ═══ -->
+<div class="tab" id="tab-memory">
+  <div class="sh">EDA memory tests</div>
+  <div class="sh-sub">Answer without looking at code or notes. Check answers only after trying.</div>
+
+  <div class="section-heading">Pandas</div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write the 5 commands you always run first on any new dataset.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">df.head() → see first rows<br>df.shape → (rows, columns)<br>df.info() → types + non-null counts<br>df.describe() → statistics summary<br>df.isnull().sum() → missing values per column</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write code that fills missing Age with the median AND fills missing Embarked with the mode.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">df["Age"] = df["Age"].fillna(df["Age"].median())<br>df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write a one-liner that shows average survival rate grouped by passenger class.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">df.groupby("Pclass")["Survived"].mean()</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">How do you rank all features by their absolute correlation with "Survived"?</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">df.corr()["Survived"].abs().sort_values(ascending=False)</div>
+  </div>
+
+  <div class="section-heading">Seaborn + Matplotlib</div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write the Seaborn line that creates a distribution plot with a smooth curve on top.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">sns.histplot(df["Age"], bins=30, kde=True)</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write a heatmap that shows all feature correlations with numbers displayed in each cell.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">sns.heatmap(df.corr(), annot=True, fmt=".2f", cmap="coolwarm", center=0)</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Write a scatter plot of Age vs Fare where each point is colored by whether the passenger survived.</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">sns.scatterplot(x="Age", y="Fare", hue="Survived", data=df, palette="Set1")</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">What is the difference between plt.subplot(2, 2, 3) and plt.subplot(1, 2, 1)? What position does each create?</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">plt.subplot(2, 2, 3) → 2 rows, 2 columns grid, position 3 (bottom-left)<br>plt.subplot(1, 2, 1) → 1 row, 2 columns grid, position 1 (left side)<br><br>Always: subplot(rows, cols, position_number)</div>
+  </div>
+
+  <div class="section-heading">Statistics + Concepts</div>
+
+  <div class="ex-card">
+    <div class="ex-q">A column has correlation = -0.34 with the target. What does the negative sign mean? Is this a useful feature?</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">Negative sign: when this feature increases, the target tends to decrease (inverse relationship).<br>Example: Pclass correlates ~-0.34 with Survived — higher class number (3rd class) = lower survival.<br><br>Is it useful? Yes — |0.34| is moderate correlation. Worth including in the model.<br>Anything with |r| > 0.1 is usually worth trying.</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Fare has mean=32 and std=49. What does this tell you about the distribution? Is it likely normal?</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">Std (49) is larger than mean (32) — this is unusual.<br>For a normal distribution, most values fall within 3σ = 3×49 = 147 of the mean.<br>But Fare can't be negative, so the distribution is right-skewed — a few passengers paid very high fares, pulling the mean up.<br><br>This is NOT normal distribution — it needs log transformation before modeling.</div>
+  </div>
+
+  <div class="ex-card">
+    <div class="ex-q">Two features have correlation = 0.92 with each other. What should you do before modeling?</div>
+    <button class="show-btn" onclick="toggleAnswer(this)">Show answer</button>
+    <div class="ex-answer">They are highly correlated (multicollinearity).<br>Keeping both gives the model redundant information — one is enough.<br><br>Action: check which one correlates more strongly with the target. Keep that one. Drop the other.<br>Or use PCA to combine them (Phase 3 topic).</div>
+  </div>
+</div>
+
+<!-- ═══ FINAL CHALLENGE TAB ═══ -->
+<div class="tab" id="tab-challenge">
+  <div class="sh">EDA Final Challenge</div>
+  <div class="sh-sub">Create eda_final_challenge.py — complete EDA on a fresh dataset from scratch</div>
+
+  <div style="background:linear-gradient(135deg,rgba(226,212,74,0.08),rgba(74,205,138,0.06));border:1px solid var(--rev-bd);border-radius:14px;padding:18px;margin-bottom:16px;">
+    <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--rev);margin-bottom:12px;">🏆 The Challenge</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.7;">Use the Iris dataset (built into sklearn — no download). Run a complete EDA on it from scratch. No looking at old files. No Googling. Everything from memory.</div>
+  </div>
+
+  <div class="section-heading">Step 1 — Load the Iris dataset</div>
+  <div class="code-block">
+<span class="c-kw">from</span> sklearn.datasets <span class="c-kw">import</span> load_iris<br>
+<span class="c-var">iris</span> = <span class="c-fn">load_iris</span>()<br>
+<span class="c-var">df</span> = pd.<span class="c-fn">DataFrame</span>(<span class="c-var">iris</span>.data, columns=<span class="c-var">iris</span>.feature_names)<br>
+<span class="c-var">df</span>[<span class="c-str">"species"</span>] = <span class="c-var">iris</span>.target<br>
+<span class="c-var">df</span>[<span class="c-str">"species_name"</span>] = <span class="c-var">df</span>[<span class="c-str">"species"</span>].<span class="c-fn">map</span>({<span class="c-num">0</span>:<span class="c-str">"setosa"</span>, <span class="c-num">1</span>:<span class="c-str">"versicolor"</span>, <span class="c-num">2</span>:<span class="c-str">"virginica"</span>})
+  </div>
+
+  <div class="section-heading">Step 2–7 — Complete all 7 EDA steps on this dataset</div>
+
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 1</span><span>First look: shape, dtypes, describe, missing values — how many rows? Any missing? What are the 4 features?</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 2</span><span>Plot histplots for all 4 features in a 2×2 subplot. Color by species_name.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 3</span><span>Plot boxplot of each feature grouped by species. Which species has the largest petals?</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 4</span><span>Plot the full correlation heatmap. Which 2 features are most correlated with each other?</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 5</span><span>Plot pairplot colored by species_name. Can you see clusters? Are any species linearly separable?</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 6</span><span>Compute mean of each feature per species using groupby.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--rev);font-weight:600;flex-shrink:0;">Task 7</span><span>Write 5 insights as comments: which features are most useful for classifying species? Which species is easiest to separate? What would you include in a model?</span></div>
+    </div>
+  </div>
+
+  <div class="section-heading">Completion checklist</div>
+  <div class="checklist" id="challenge-list">
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">eda_revision.py — all 7 steps written and working on Titanic</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">eda_final_challenge.py — Iris EDA complete from memory</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">All 7 memory test questions answered without notes</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">Heatmap saved — most important feature identified</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">Pairplot saved — visual cluster separation seen</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">5 Iris insights written as code comments</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">All PNG files pushed to GitHub</div></div>
+    <div class="check-item" onclick="toggleCheckC(this)"><div class="check-box"></div><div class="check-text">Committed: "EDA revision — Titanic + Iris complete from memory"</div></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog" id="cprog"></div>
+  </div>
+  <div class="prog-label" id="clabel">0 / 8 completed</div>
+
+  <div class="tip-ml" style="margin-top:14px;"><strong>After completing this challenge you can confidently say:</strong> "I can perform EDA on any real-world dataset — load, clean, visualize distributions, detect outliers, analyze correlations, and extract modeling insights." That sentence belongs in every interview you walk into.</div>
+</div>
+
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+function toggleStep(h){
+  const b=h.nextElementSibling;
+  const c=h.querySelector('.step-chev');
+  const o=b.classList.contains('open');
+  b.classList.toggle('open',!o);
+  c.classList.toggle('open',!o);
+}
+function toggleAnswer(btn){
+  const ans=btn.nextElementSibling;
+  const shown=ans.style.display==='block';
+  ans.style.display=shown?'none':'block';
+  btn.textContent=shown?'Show answer':'Hide answer';
+}
+function toggleCheckC(el){
+  el.classList.toggle('done');
+  el.querySelector('.check-box').textContent=el.classList.contains('done')?'✓':'';
+  const total=document.querySelectorAll('#challenge-list .check-item').length;
+  const done=document.querySelectorAll('#challenge-list .check-item.done').length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById('cprog').style.width=pct+'%';
+  document.getElementById('clabel').textContent=`${done} / ${total} completed${pct===100?' — EDA Revision Complete! 🎉':''}`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#0D1117;--card:#161B27;--card2:#1C2235;--border:#252D42;
+  --text:#E8EDF8;--muted:#7A839E;--faint:#353D58;
+  --py:#4A90E2;--py-bg:rgba(74,144,226,0.10);--py-bd:rgba(74,144,226,0.28);
+  --ml:#4ACD8A;--ml-bg:rgba(74,205,138,0.10);--ml-bd:rgba(74,205,138,0.28);
+  --math:#E2944A;--math-bg:rgba(226,148,74,0.10);--math-bd:rgba(226,148,74,0.28);
+  --purple:#A855F7;--purple-bg:rgba(168,85,247,0.10);--purple-bd:rgba(168,85,247,0.28);
+  --yellow:#E2D44A;--yellow-bg:rgba(226,212,74,0.08);--yellow-bd:rgba(226,212,74,0.25);
+  --pink:#F472B6;--pink-bg:rgba(244,114,182,0.10);--pink-bd:rgba(244,114,182,0.28);
+  --red:#F87171;--red-bg:rgba(248,113,113,0.10);--red-bd:rgba(248,113,113,0.28);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.6;}
+
+.hero{background:linear-gradient(135deg,#0D1117,#0D1A0D,#0D1117);padding:28px 24px 22px;border-bottom:1px solid var(--border);}
+.hero-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ml);background:var(--ml-bg);border:1px solid var(--ml-bd);padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:12px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;}
+.hero-title span{color:var(--ml);}
+.hero-sub{font-size:12px;color:var(--muted);}
+
+.nav{background:var(--card);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 24px;position:sticky;top:0;z-index:20;}
+.nav::-webkit-scrollbar{display:none;}
+.nb{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:12px 14px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.nb:hover{color:var(--text);}
+.nb.on{color:var(--ml);border-bottom-color:var(--ml);}
+
+.content{padding:20px 24px 60px;max-width:720px;margin:0 auto;}
+.tab{display:none;}.tab.on{display:block;}
+
+.sh{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.sh-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+
+.alert{background:linear-gradient(135deg,rgba(248,113,113,0.08),rgba(168,85,247,0.06));border:1px solid var(--red-bd);border-radius:12px;padding:16px;margin-bottom:20px;}
+.alert-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--red);margin-bottom:8px;}
+.alert-body{font-size:12px;color:var(--muted);line-height:1.7;}
+
+.lang-card{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
+.lc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.lc-title{font-size:13px;font-weight:600;margin-bottom:8px;}
+.lc-items{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted);}
+.lc-verdict{margin-top:10px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;display:inline-block;}
+.v-yes{background:var(--ml-bg);color:var(--ml);border:1px solid var(--ml-bd);}
+.v-no{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd);}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.stat-n{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--ml),var(--py));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:3px;}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+
+.phase-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+.phase-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.phase-head:hover{background:var(--card2);}
+.phase-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:4px 10px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--muted);flex-shrink:0;}
+.phase-num.p1{background:var(--ml-bg);border-color:var(--ml-bd);color:var(--ml);}
+.phase-num.p2{background:var(--py-bg);border-color:var(--py-bd);color:var(--py);}
+.phase-num.p3{background:var(--math-bg);border-color:var(--math-bd);color:var(--math);}
+.phase-num.p4{background:var(--purple-bg);border-color:var(--purple-bd);color:var(--purple);}
+.phase-title{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.phase-dur{font-size:11px;color:var(--muted);}
+.phase-chev{color:var(--faint);font-size:13px;transition:transform .3s;flex-shrink:0;}
+.phase-chev.open{transform:rotate(180deg);}
+.phase-body{display:none;border-top:1px solid var(--border);padding:18px;}
+.phase-body.open{display:block;}
+
+.topic-row{display:flex;gap:12px;align-items:flex-start;background:var(--card2);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+.topic-num{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:var(--ml);flex-shrink:0;width:24px;}
+.topic-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.topic-desc{font-size:11px;color:var(--muted);}
+.topic-qs{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:4px;display:inline-block;}
+.tq-easy{background:var(--ml-bg);color:var(--ml);border:1px solid var(--ml-bd);}
+.tq-med{background:var(--math-bg);color:var(--math);border:1px solid var(--math-bd);}
+
+.method-step{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);}
+.method-step:last-child{border-bottom:none;}
+.ms-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--ml);flex-shrink:0;width:32px;line-height:1;}
+.ms-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.ms-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.ms-example{margin-top:8px;background:#0A0E1A;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ml);}
+
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;}
+.day-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.day-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;}
+.db-py{background:var(--py-bg);color:var(--py);}
+.db-ml{background:var(--ml-bg);color:var(--ml);}
+.db-dsa{background:var(--purple-bg);color:var(--purple);}
+.db-rev{background:var(--yellow-bg);color:var(--yellow);}
+.day-rows{display:flex;flex-direction:column;gap:6px;}
+.day-row{display:flex;gap:10px;font-size:12px;color:var(--muted);}
+.dr-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--faint);flex-shrink:0;width:60px;}
+
+.code-block{background:#0A0E1A;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;font-family:'DM Mono',monospace;font-size:11px;line-height:1.9;overflow-x:auto;}
+.c-comment{color:#4A5568;}.c-kw{color:#A78BFA;}.c-str{color:#4ACD8A;}.c-num{color:#F472B6;}.c-fn{color:#4A90E2;}.c-var{color:#E2944A;}
+
+.tip{background:var(--yellow-bg);border:1px dashed var(--yellow-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
+.tip strong{color:var(--yellow);}
+.tip-ml{background:var(--ml-bg);border:1px dashed var(--ml-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
+.tip-ml strong{color:var(--ml);}
+.tip-red{background:var(--red-bg);border:1px dashed var(--red-bd);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6;}
+.tip-red strong{color:var(--red);}
+
+.resource-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.resource-row:last-child{border-bottom:none;}
+.rr-icon{font-size:16px;flex-shrink:0;}
+.rr-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.rr-desc{font-size:11px;color:var(--muted);}
+.rr-free{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--ml-bg);color:var(--ml);border:1px solid var(--ml-bd);margin-left:6px;vertical-align:middle;}
+
+.section-heading{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">DSA for AI/ML · Python · Beginner-Friendly · No time limit</div>
+  <div class="hero-title">DSA Roadmap for <span>AI/ML Engineering Roles</span></div>
+  <div class="hero-sub">Structured for slow learners · Problem-statement breakdown method · Minimum DSA for maximum impact</div>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="show('honest')">Honest Answers</button>
+  <button class="nb" onclick="show('method')">Problem Method</button>
+  <button class="nb" onclick="show('roadmap')">Roadmap</button>
+  <button class="nb" onclick="show('daily')">Daily Plan</button>
+  <button class="nb" onclick="show('revision')">Revision</button>
+  <button class="nb" onclick="show('resources')">Resources</button>
+</div>
+
+<div class="content">
+
+<!-- ═══ HONEST ANSWERS ═══ -->
+<div class="tab on" id="tab-honest">
+  <div class="sh">Honest answers first</div>
+  <div class="sh-sub">Before the plan — 3 things you need to hear clearly</div>
+
+  <div class="alert">
+    <div class="alert-title">⚠️ The two biggest challenges you mentioned — addressed directly</div>
+    <div class="alert-body">
+      <strong style="color:var(--red)">1. You struggle to understand DSA problem statements.</strong><br>
+      This is the #1 reason people fail DSA — not intelligence, not lack of practice. The fix is a structured reading method. Every problem has a pattern. You'll learn to decode any problem statement in 5 steps. This is covered in the "Problem Method" tab — read it before anything else.<br><br>
+      <strong style="color:var(--red)">2. You are a slow learner.</strong><br>
+      This is an advantage in disguise. Slow learners who understand deeply beat fast learners who memorize in every interview. This plan has no deadlines. Every topic stays open until you can solve 3 problems without help. That's the only rule.
+    </div>
+  </div>
+
+  <div class="sh" style="margin-top:0">Python vs Java vs C++ — honest answer</div>
+  <div class="sh-sub" style="margin-bottom:12px;">For AI/ML engineering roles specifically</div>
+
+  <div class="lang-card">
+    <div class="lc">
+      <div class="lc-title" style="color:var(--py)">🐍 Python</div>
+      <div class="lc-items">
+        <div>✅ Used in all ML interviews</div>
+        <div>✅ Cleaner syntax = focus on logic</div>
+        <div>✅ You already know it</div>
+        <div>✅ Accepted at Google, Amazon, Meta</div>
+        <div>✅ All ML libraries are Python</div>
+        <div>⚠️ Slightly slower runtime</div>
+      </div>
+      <div class="lc-verdict v-yes">✅ Perfect for you</div>
+    </div>
+    <div class="lc">
+      <div class="lc-title" style="color:var(--math)">☕ Java</div>
+      <div class="lc-items">
+        <div>✅ Fast runtime</div>
+        <div>✅ Strong typing helps</div>
+        <div>❌ New language to learn</div>
+        <div>❌ Verbose syntax</div>
+        <div>❌ Not used in ML work</div>
+        <div>❌ Wastes your Python advantage</div>
+      </div>
+      <div class="lc-verdict v-no">❌ Skip for now</div>
+    </div>
+    <div class="lc">
+      <div class="lc-title" style="color:var(--purple)">⚡ C++</div>
+      <div class="lc-items">
+        <div>✅ Fastest runtime</div>
+        <div>✅ Competitive programming</div>
+        <div>❌ Hard to learn</div>
+        <div>❌ Not used in ML</div>
+        <div>❌ Memory management complex</div>
+        <div>❌ Wrong tool for your goal</div>
+      </div>
+      <div class="lc-verdict v-no">❌ Not needed</div>
+    </div>
+  </div>
+
+  <div class="tip-ml"><strong>Final answer on language:</strong> Python is 100% enough for AI/ML engineering roles. Google, Amazon, Microsoft, Swiggy, Zepto — all accept Python in DSA interviews. You already know Python. Don't switch. Every hour you'd spend learning Java is an hour you could spend solving problems in Python.</div>
+
+  <div class="section-heading">What DSA actually matters for AI/ML roles</div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">AI/ML interviews are different from SWE interviews. They test less hard DSA and more practical problem-solving.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:10px;font-size:12px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:80px;">MUST KNOW</span><span style="color:var(--text);">Arrays, Strings, Hashmaps, Sorting, Basic Recursion, Two Pointers, Binary Search</span></div>
+      <div style="display:flex;gap:10px;font-size:12px;"><span style="color:var(--math);font-weight:600;flex-shrink:0;width:80px;">GOOD TO KNOW</span><span style="color:var(--muted);">Stacks, Queues, Linked Lists, Basic Trees, Sliding Window</span></div>
+      <div style="display:flex;gap:10px;font-size:12px;"><span style="color:var(--faint);font-weight:600;flex-shrink:0;width:80px;">SKIP FOR NOW</span><span style="color:var(--faint);">Complex graphs, Advanced DP, Segment trees, Tries — only for FAANG SWE roles</span></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">6</div><div class="stat-l">Core topics</div></div>
+    <div class="stat"><div class="stat-n">80</div><div class="stat-l">Total problems</div></div>
+    <div class="stat"><div class="stat-n">4</div><div class="stat-l">Phases</div></div>
+    <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Time limit</div></div>
+  </div>
+</div>
+
+<!-- ═══ PROBLEM METHOD ═══ -->
+<div class="tab" id="tab-method">
+  <div class="sh">The 5-step problem method</div>
+  <div class="sh-sub">For slow learners who struggle with problem statements — read this before solving any problem</div>
+
+  <div class="alert">
+    <div class="alert-title">🎯 This is the most important tab in the entire plan</div>
+    <div class="alert-body">Most people who "can't do DSA" are not bad at coding. They're bad at reading problem statements. The problem statement is written in a very specific way. Once you learn to decode it — every problem becomes much easier. This 5-step method works on every DSA problem ever written.</div>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;">
+
+    <div class="method-step">
+      <div class="ms-num">1</div>
+      <div>
+        <div class="ms-title">Read once — just understand what is being given and what is wanted</div>
+        <div class="ms-desc">Don't try to solve. Just identify:<br>→ What is the INPUT? (What data am I given?)<br>→ What is the OUTPUT? (What do I need to return?)<br>→ Read the examples first — they are clearer than the problem text.</div>
+        <div class="ms-example">Problem: "Given an array of integers, return the largest element."<br>INPUT: array of integers → [3, 1, 7, 2, 5]<br>OUTPUT: one number → 7</div>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="ms-num">2</div>
+      <div>
+        <div class="ms-title">Write out the example by hand on paper</div>
+        <div class="ms-desc">Copy the example from the problem onto paper. Trace through it manually.<br>→ What happens step by step to get from input to output?<br>→ This gives you the algorithm before you write any code.<br>→ If there are multiple examples — do ALL of them by hand.</div>
+        <div class="ms-example">Input: [3, 1, 7, 2, 5]<br>Step 1: Start with max = 3<br>Step 2: 1 < 3 → max stays 3<br>Step 3: 7 > 3 → max = 7<br>Step 4: 2 < 7 → max stays 7<br>Step 5: 5 < 7 → max stays 7<br>Output: 7 ✓</div>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="ms-num">3</div>
+      <div>
+        <div class="ms-title">Write the algorithm in plain English — no code yet</div>
+        <div class="ms-desc">Translate your paper trace into steps. Use words you'd use to explain to a friend.<br>→ "Start with the first element as the max"<br>→ "Loop through each remaining element"<br>→ "If current element is bigger than max, update max"<br>→ "Return max at the end"<br><br>If you can explain it clearly in words — the code writes itself.</div>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="ms-num">4</div>
+      <div>
+        <div class="ms-title">Translate each English step directly to Python</div>
+        <div class="ms-desc">One English step = one or two lines of Python. Nothing more.<br>Don't write the whole function at once. Write one step, test it, then the next.</div>
+        <div class="ms-example">def find_max(arr):<br>&nbsp;&nbsp;max_val = arr[0]      # Start with first element<br>&nbsp;&nbsp;for num in arr:        # Loop through each element<br>&nbsp;&nbsp;&nbsp;&nbsp;if num > max_val:  # If bigger than current max<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_val = num   # Update max<br>&nbsp;&nbsp;return max_val         # Return result</div>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="ms-num">5</div>
+      <div>
+        <div class="ms-title">Test with the given examples AND your own edge cases</div>
+        <div class="ms-desc">Run the examples from the problem — do they match expected output?<br>Then test edge cases:<br>→ Empty array → what happens?<br>→ Array with one element → correct?<br>→ All negative numbers → still works?<br>→ All same numbers → correct?<br><br>Edge cases are how interviews catch you. Testing them manually makes your solution bulletproof.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip-ml"><strong>The 20-minute rule for slow learners:</strong> If you're stuck on a problem for 20 minutes — stop trying to solve it. Instead: look at the solution, understand it fully, then CLOSE IT and rewrite it from scratch without looking. That process = you actually learned it. Just reading solutions = you learned nothing.</div>
+
+  <div class="section-heading">How to decode confusing problem statements</div>
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;">When confused:</span><span>Read the examples FIRST, not the problem text. Examples always tell you more.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;">Jargon:</span><span>"Contiguous subarray" = a slice of the array with no gaps. "Subsequence" = elements in order but not necessarily adjacent.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;">Constraints:</span><span>n ≤ 10⁵ means your solution must be fast. n ≤ 20 means brute force is okay.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;">"Return -1 if not found":</span><span>This tells you the default case when there's no answer.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;">Still confused:</span><span>Google "[problem name] explained for beginners" — someone has broken it down simply.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROADMAP ═══ -->
+<div class="tab" id="tab-roadmap">
+  <div class="sh">Topic-wise roadmap</div>
+  <div class="sh-sub">4 phases · 6 core topics · 80 problems total · Expand each phase to see topics</div>
+
+  <!-- PHASE 1 -->
+  <div class="phase-card">
+    <div class="phase-head" onclick="togglePhase(this)">
+      <span class="phase-num p1">Phase 1</span>
+      <span class="phase-title">Foundations — data structures you already use</span>
+      <span class="phase-dur">~4 weeks · 25 problems</span>
+      <span class="phase-chev">▾</span>
+    </div>
+    <div class="phase-body">
+      <div class="tip-ml" style="margin-top:0;margin-bottom:14px;"><strong>Start here.</strong> You already know Python lists, dicts, and loops. Phase 1 just teaches you to use them to solve structured problems. This phase should feel comfortable.</div>
+
+      <div class="topic-row">
+        <div class="topic-num">T1</div>
+        <div>
+          <div class="topic-title">Arrays and Lists</div>
+          <div class="topic-desc">The foundation of everything. Learn: indexing, slicing, two pointers, searching, reversal, rotation. Every ML dataset is an array — this directly connects to your work.</div>
+          <div><span class="topic-qs tq-easy">8 Easy problems</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T2</div>
+        <div>
+          <div class="topic-title">Strings</div>
+          <div class="topic-desc">String manipulation — reversals, palindromes, anagrams, counting characters. Critical for NLP work and text preprocessing in ML.</div>
+          <div><span class="topic-qs tq-easy">7 Easy problems</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T3</div>
+        <div>
+          <div class="topic-title">Hashmaps and Sets (Python dict)</div>
+          <div class="topic-desc">Store key-value pairs for O(1) lookup. Used in frequency counting, duplicate detection, grouping. In ML: feature encoding, vocabulary building.</div>
+          <div><span class="topic-qs tq-easy">10 Easy problems</span></div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="c-comment"># Array problems use patterns like this:</span><br>
+<span class="c-comment"># Two pointer — find pair with target sum</span><br>
+<span class="c-kw">def</span> <span class="c-fn">two_sum</span>(<span class="c-var">arr</span>, <span class="c-var">target</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">seen</span> = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">for</span> <span class="c-var">i</span>, <span class="c-var">num</span> <span class="c-kw">in</span> <span class="c-fn">enumerate</span>(<span class="c-var">arr</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">complement</span> = <span class="c-var">target</span> - <span class="c-var">num</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">if</span> <span class="c-var">complement</span> <span class="c-kw">in</span> <span class="c-var">seen</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">return</span> [<span class="c-var">seen</span>[<span class="c-var">complement</span>], <span class="c-var">i</span>]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">seen</span>[<span class="c-var">num</span>] = <span class="c-var">i</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">return</span> []
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-card">
+    <div class="phase-head" onclick="togglePhase(this)">
+      <span class="phase-num p2">Phase 2</span>
+      <span class="phase-title">Problem patterns — most interview questions fit these</span>
+      <span class="phase-dur">~4 weeks · 25 problems</span>
+      <span class="phase-chev">▾</span>
+    </div>
+    <div class="phase-body">
+      <div class="tip-ml" style="margin-top:0;margin-bottom:14px;"><strong>This phase is where DSA clicks.</strong> Most interview problems are variations of 4–5 patterns. Once you see a pattern, you can solve any variation of it.</div>
+
+      <div class="topic-row">
+        <div class="topic-num">T4</div>
+        <div>
+          <div class="topic-title">Sorting and Searching</div>
+          <div class="topic-desc">Know: bubble, selection, insertion (understand, not memorize). Binary search — the most important algorithm for ML interviews. Used in hyperparameter tuning, searching sorted datasets.</div>
+          <div><span class="topic-qs tq-easy">5 Easy</span>&nbsp;<span class="topic-qs tq-med">5 Medium</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T5</div>
+        <div>
+          <div class="topic-title">Two Pointers and Sliding Window</div>
+          <div class="topic-desc">Two pointers: use two indices moving through an array — eliminates nested loops. Sliding window: maintain a window over a subarray — used in time series analysis, moving averages in ML.</div>
+          <div><span class="topic-qs tq-easy">5 Easy</span>&nbsp;<span class="topic-qs tq-med">5 Medium</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T6</div>
+        <div>
+          <div class="topic-title">Stack and Queue</div>
+          <div class="topic-desc">Stack: Last In First Out — use Python list with .append() and .pop(). Queue: First In First Out — use collections.deque. Used in BFS, expression evaluation, undo operations.</div>
+          <div><span class="topic-qs tq-easy">5 Easy</span></div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="c-comment"># Binary search pattern — memorize this structure</span><br>
+<span class="c-kw">def</span> <span class="c-fn">binary_search</span>(<span class="c-var">arr</span>, <span class="c-var">target</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">left</span>, <span class="c-var">right</span> = <span class="c-num">0</span>, <span class="c-fn">len</span>(<span class="c-var">arr</span>) - <span class="c-num">1</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">while</span> <span class="c-var">left</span> <= <span class="c-var">right</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-var">mid</span> = (<span class="c-var">left</span> + <span class="c-var">right</span>) // <span class="c-num">2</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">if</span> <span class="c-var">arr</span>[<span class="c-var">mid</span>] == <span class="c-var">target</span>: <span class="c-kw">return</span> <span class="c-var">mid</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">elif</span> <span class="c-var">arr</span>[<span class="c-var">mid</span>] < <span class="c-var">target</span>: <span class="c-var">left</span> = <span class="c-var">mid</span> + <span class="c-num">1</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">else</span>: <span class="c-var">right</span> = <span class="c-var">mid</span> - <span class="c-num">1</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">return</span> -<span class="c-num">1</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-card">
+    <div class="phase-head" onclick="togglePhase(this)">
+      <span class="phase-num p3">Phase 3</span>
+      <span class="phase-title">Recursion + Basic Trees — intermediate patterns</span>
+      <span class="phase-dur">~4 weeks · 20 problems</span>
+      <span class="phase-chev">▾</span>
+    </div>
+    <div class="phase-body">
+      <div class="tip" style="margin-top:0;margin-bottom:14px;"><strong>Take your time here.</strong> Recursion confuses almost everyone at first. Give it the time it needs. Don't move forward until recursion genuinely makes sense — not just works on paper.</div>
+
+      <div class="topic-row">
+        <div class="topic-num">T7</div>
+        <div>
+          <div class="topic-title">Recursion</div>
+          <div class="topic-desc">A function that calls itself. Understand: base case (when to stop), recursive case (what to repeat). Think of it as: solve a smaller version of the same problem. Used in tree traversal, divide and conquer.</div>
+          <div><span class="topic-qs tq-easy">5 Easy</span>&nbsp;<span class="topic-qs tq-med">5 Medium</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T8</div>
+        <div>
+          <div class="topic-title">Basic Trees (Binary Tree)</div>
+          <div class="topic-desc">Nodes with left and right children. Learn: BFS (level by level), DFS (depth first — preorder, inorder, postorder). Trees appear in decision tree ML models — understanding them deepens your ML knowledge too.</div>
+          <div><span class="topic-qs tq-easy">5 Easy</span>&nbsp;<span class="topic-qs tq-med">5 Medium</span></div>
+        </div>
+      </div>
+
+      <div class="code-block">
+<span class="c-comment"># Recursion template — always identify these 2 parts</span><br>
+<span class="c-kw">def</span> <span class="c-fn">factorial</span>(<span class="c-var">n</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">if</span> <span class="c-var">n</span> <= <span class="c-num">1</span>: <span class="c-kw">return</span> <span class="c-num">1</span>  <span class="c-comment"># BASE CASE — stop here</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">return</span> <span class="c-var">n</span> * <span class="c-fn">factorial</span>(<span class="c-var">n</span>-<span class="c-num">1</span>)   <span class="c-comment"># RECURSIVE CASE — smaller problem</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-card">
+    <div class="phase-head" onclick="togglePhase(this)">
+      <span class="phase-num p4">Phase 4</span>
+      <span class="phase-title">Interview-ready — SQL + practice for AI/ML roles</span>
+      <span class="phase-dur">~3 weeks · 10 problems</span>
+      <span class="phase-chev">▾</span>
+    </div>
+    <div class="phase-body">
+      <div class="tip-ml" style="margin-top:0;margin-bottom:14px;"><strong>This phase is interview simulation.</strong> Mix of all previous topics. Focus on solving medium problems cleanly and explaining your thought process out loud.</div>
+
+      <div class="topic-row">
+        <div class="topic-num">T9</div>
+        <div>
+          <div class="topic-title">SQL — almost every AI/ML interview has this</div>
+          <div class="topic-desc">SELECT, WHERE, GROUP BY, ORDER BY, JOINs, window functions. You already started this in your ML plan. 10 LeetCode SQL Medium problems = ready for most interviews.</div>
+          <div><span class="topic-qs tq-med">10 Medium SQL</span></div>
+        </div>
+      </div>
+
+      <div class="topic-row">
+        <div class="topic-num">T10</div>
+        <div>
+          <div class="topic-title">Mock interviews + mixed practice</div>
+          <div class="topic-desc">Pick 2 random problems from previous phases each week. Time yourself: 30 minutes per problem. Explain your solution out loud as you code — this is exactly what interviews feel like.</div>
+          <div><span class="topic-qs tq-med">Ongoing</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Total: 80 problems. That's it.</strong> Research shows that top 500 LeetCode Easy+Medium problems cover 90% of what appears in AI/ML interviews. You don't need 500. You need 80 deeply understood problems — not 500 half-remembered ones.</div>
+</div>
+
+<!-- ═══ DAILY PLAN ═══ -->
+<div class="tab" id="tab-daily">
+  <div class="sh">Daily DSA practice structure</div>
+  <div class="sh-sub">Runs alongside your AI/ML learning — not instead of it</div>
+
+  <div class="tip-red" style="margin-bottom:16px;"><strong>Most important rule:</strong> DSA runs ALONGSIDE your ML plan — not replacing it. 45 minutes of DSA per day on weekdays. Your ML study continues as planned. On weekends: DSA revision only, ML rest.</div>
+
+  <div class="section-heading">Weekday schedule (Mon–Fri)</div>
+
+  <div class="day-card">
+    <div class="day-title"><span class="day-badge db-ml">ML PLAN</span> Morning session — 1 hour</div>
+    <div class="day-rows">
+      <div class="day-row"><span class="dr-time">Morning</span><span>Continue your normal ML/Python/Math plan exactly as before</span></div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-title"><span class="day-badge db-dsa">DSA</span> Afternoon add-on — 45 minutes</div>
+    <div class="day-rows">
+      <div class="day-row"><span class="dr-time">10 min</span><span><strong>Read the problem.</strong> Apply Step 1 of the 5-step method. Understand input/output only.</span></div>
+      <div class="day-row"><span class="dr-time">10 min</span><span><strong>Paper trace.</strong> Copy the example, work through it by hand. Write algorithm in plain English.</span></div>
+      <div class="day-row"><span class="dr-time">20 min</span><span><strong>Code it.</strong> Translate your English steps to Python. Test with given examples and 2 edge cases.</span></div>
+      <div class="day-row"><span class="dr-time">5 min</span><span><strong>Reflect.</strong> Write in notebook: what pattern did this use? What would I do differently?</span></div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-title"><span class="day-badge db-ml">ML PLAN</span> Evening — 30 minutes</div>
+    <div class="day-rows">
+      <div class="day-row"><span class="dr-time">Evening</span><span>Continue ML revision notebook — 3 questions. Same as always.</span></div>
+    </div>
+  </div>
+
+  <div class="section-heading">Weekend</div>
+
+  <div class="day-card">
+    <div class="day-title"><span class="day-badge db-rev">REVISION</span> Saturday — DSA revision only (30 min)</div>
+    <div class="day-rows">
+      <div class="day-row"><span class="dr-time">30 min</span><span>Pick 2 problems from the current week. Solve them again from scratch without looking at your previous solution.</span></div>
+    </div>
+  </div>
+
+  <div class="day-card">
+    <div class="day-title"><span class="day-badge db-rev">REST</span> Sunday — complete rest</div>
+    <div class="day-rows">
+      <div class="day-row"><span class="dr-time">All day</span><span>No DSA. No ML. Rest. Your brain needs consolidation time.</span></div>
+    </div>
+  </div>
+
+  <div class="section-heading">Problem quota per day</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:10px;"><span style="color:var(--ml);font-weight:600;width:100px;">Easy problem</span><span>1 per day. Take the full 45 minutes. Never rush.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:10px;"><span style="color:var(--math);font-weight:600;width:100px;">Medium problem</span><span>Give it 2 days. Day 1: understand + attempt. Day 2: complete + edge cases.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:10px;"><span style="color:var(--faint);font-weight:600;width:100px;">Stuck &gt; 20 min</span><span>Read the solution. Understand it. Close it. Rewrite from scratch. This counts as solving it.</span></div>
+    </div>
+  </div>
+
+  <div class="tip"><strong>Weekly target: 5 problems per week.</strong> That's 1 per weekday. At this pace you finish 80 problems in 16 weeks — perfectly alongside your ML Phase 1 through Phase 2 completion. No rushing. No burning out.</div>
+</div>
+
+<!-- ═══ REVISION ═══ -->
+<div class="tab" id="tab-revision">
+  <div class="sh">Revision strategy for slow learners</div>
+  <div class="sh-sub">How to make sure you actually remember what you learned</div>
+
+  <div class="alert">
+    <div class="alert-title">🔁 The spaced repetition rule for DSA</div>
+    <div class="alert-body">Most people solve a problem, feel good, and never look at it again. A week later they can't solve it. The fix: revisit every solved problem 3 times — after 1 day, after 1 week, after 1 month. At each revisit: solve from scratch without notes. This is how you actually learn DSA, not just complete it.</div>
+  </div>
+
+  <div class="section-heading">The 3-revisit system</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--ml);flex-shrink:0;">1st</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">Day after solving — quick revisit (10 min)</div><div style="font-size:12px;color:var(--muted);">Look at the problem title only. Can you recall the approach? If yes — write it in 2 lines. If no — re-read your solution.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--math);flex-shrink:0;">2nd</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">1 week later — solve again (20 min)</div><div style="font-size:12px;color:var(--muted);">Open the problem. Solve it fresh. No looking at previous code. Time yourself.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--purple);flex-shrink:0;">3rd</div>
+        <div><div style="font-size:13px;font-weight:600;color:var(--text);">1 month later — final check (15 min)</div><div style="font-size:12px;color:var(--muted);">Solve one more time. If you can do it in 15 minutes — this problem is permanently learned. Mark it done.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-heading">Weekly revision block (Saturday 30 min)</div>
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--yellow);font-weight:600;flex-shrink:0;">10 min</span><span>Pick 2 problems from this week. Read only the title. Can you recall the pattern? Write it down.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--yellow);font-weight:600;flex-shrink:0;">10 min</span><span>Write in notebook: what patterns did I learn this week? Array problems use ___, Hashmap problems use ___.</span></div>
+      <div style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--yellow);font-weight:600;flex-shrink:0;">10 min</span><span>Resolve your weakest problem from the week completely from scratch.</span></div>
+    </div>
+  </div>
+
+  <div class="section-heading">Pattern recognition notebook</div>
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Keep a running list of patterns. After solving any problem, add one line:</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ml);line-height:2;">
+      "Two Sum" → hashmap to store seen numbers<br>
+      "Find max subarray" → sliding window or Kadane's algo<br>
+      "Is palindrome" → two pointer from both ends<br>
+      "Level order tree traversal" → BFS with queue<br>
+      "Binary search" → sorted array, eliminate half each step
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px;">After 80 problems you'll have 80 patterns. Most new problems will match one you've seen.</div>
+  </div>
+
+  <div class="tip"><strong>The only metric that matters:</strong> Can you solve the problem from scratch one week later without looking at your notes? If yes — you learned it. If no — you just completed it. Those are very different things.</div>
+</div>
+
+<!-- ═══ RESOURCES ═══ -->
+<div class="tab" id="tab-resources">
+  <div class="sh">Resources — all free, curated for slow learners</div>
+  <div class="sh-sub">Ordered by how beginner-friendly they are</div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+
+    <div class="resource-row">
+      <div class="rr-icon">📺</div>
+      <div>
+        <div class="rr-title">NeetCode.io <span class="rr-free">Free</span></div>
+        <div class="rr-desc">Best visual DSA explanations on YouTube. Every problem explained with diagrams and animations. Start here for every new topic. His "Roadmap" on neetcode.io is the best structured list.</div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="rr-icon">🧩</div>
+      <div>
+        <div class="rr-title">LeetCode <span class="rr-free">Free tier sufficient</span></div>
+        <div class="rr-desc">The industry standard platform. Filter by: Easy → your topic → Python. Solve in order of difficulty. Don't buy premium — the free problems are more than enough for AI/ML roles.</div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="rr-icon">📺</div>
+      <div>
+        <div class="rr-title">Abdul Bari Algorithms — YouTube <span class="rr-free">Free</span></div>
+        <div class="rr-desc">Best for understanding WHY algorithms work. Extremely clear explanations. Watch for any topic you don't understand after trying NeetCode. His recursion series is the best for beginners.</div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="rr-icon">📚</div>
+      <div>
+        <div class="rr-title">Python DSA — GeeksForGeeks <span class="rr-free">Free</span></div>
+        <div class="rr-desc">When you need to understand a Python-specific implementation. Google "[topic] Python GeeksForGeeks" for any data structure. Has code examples and complexity analysis.</div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="rr-icon">🗺️</div>
+      <div>
+        <div class="rr-title">NeetCode 150 problem list <span class="rr-free">Free</span></div>
+        <div class="rr-desc">The definitive curated problem list. Go to neetcode.io → Practice → filter by your current topic. This list covers everything you need. Ignore problems outside your current phase.</div>
+      </div>
+    </div>
+
+    <div class="resource-row">
+      <div class="rr-icon">💬</div>
+      <div>
+        <div class="rr-title">LeetCode discussion tab — for every problem <span class="rr-free">Free</span></div>
+        <div class="rr-desc">After you solve (or fail to solve) a problem — read the top 2-3 discussions. Someone always explains it clearly. Filter by Python. This is where you learn the elegant solution after your brute force attempt.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-heading">Problem list — Phase 1 starter problems (do these first)</div>
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;">
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted);">
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">1.</span><span>Two Sum (LC #1) — HashMap pattern</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">2.</span><span>Best Time to Buy and Sell Stock (LC #121) — sliding window</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">3.</span><span>Contains Duplicate (LC #217) — hashset</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">4.</span><span>Valid Anagram (LC #242) — character counting</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">5.</span><span>Reverse String (LC #344) — two pointers</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">6.</span><span>Palindrome check (LC #125) — two pointers</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">7.</span><span>Maximum Subarray (LC #53) — Kadane's algorithm</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">8.</span><span>Valid Parentheses (LC #20) — stack pattern</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">9.</span><span>Merge Sorted Arrays (LC #88) — two pointers</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--ml);font-weight:600;flex-shrink:0;width:20px;">10.</span><span>First start here — don't jump to Medium until 7/10 above feel easy</span></div>
+    </div>
+  </div>
+
+  <div class="tip-ml"><strong>The right order to use resources:</strong><br>1. Try the problem yourself (20 min)<br>2. If stuck: watch NeetCode explanation for that problem<br>3. Close the video. Code it yourself.<br>4. Read LeetCode discussions for the elegant solution<br>5. Add the pattern to your notebook</div>
+</div>
+
+</div><!-- end content -->
+
+<script>
+function show(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+function togglePhase(h){
+  const b=h.nextElementSibling;
+  const c=h.querySelector('.phase-chev');
+  const o=b.classList.contains('open');
+  b.classList.toggle('open',!o);
+  c.classList.toggle('open',!o);
+}
+</script>
+</body>
+</html>
