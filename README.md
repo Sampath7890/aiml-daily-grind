@@ -46,7 +46,7 @@ Yeah. I lived that. I was that guy staring at a roadmap that said "learn Python 
 
 So I said forget it and built my own. **Day by day. Week by week. Topic by topic.**
 
-This is the **exact plan I'm following** as a 3rd-year B.Tech AI & ML student at KMCE, Hyderabad to go from "I know what a for loop is" to "I have a BERT model deployed on AWS and a ₹15–25 LPA offer."
+This is the **exact plan I'm following** as a 3rd-year B.Tech AI & ML student at KMCE, Hyderabad to go from
 
 Every single day has a topic. Every week ends with something built. Every phase ends with a deployed project. No vague "learn deep learning" nonsense — I mean **Monday: build a 2-layer neural net in pure NumPy. Friday: deploy it via FastAPI on Render.**
 
