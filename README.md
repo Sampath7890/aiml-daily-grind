@@ -292,21 +292,6 @@ The S step is what most people skip and it's exactly what interviewers ask about
 
 ---
 
-## 😅 Honest Confessions From Someone Actually Doing This
-
-Look, I'm not gonna pretend this is easy. Here's what actually happened:
-
-- **Week 3 NumPy:** I genuinely did not understand broadcasting for like 4 days. I re-read the docs, watched a video, re-read the docs again. It clicked on day 5. You will have this moment. It's normal.
-
-- **First Kaggle submission:** My model scored worse than just predicting the mean. I submitted it anyway and put it on my resume as "first Kaggle competition." No regrets.
-
-- **FastAPI Week:** I spent 2 hours debugging a 422 error that turned out to be a typo in my Pydantic model. Two hours. For a typo. Welcome to engineering.
-
-- **Every Friday project:** Half of them didn't work the way I planned. I shipped them anyway. A broken project on GitHub beats a perfect project that only exists in your head.
-
-The roadmap has no time limit for a reason. If Week 4 takes you 2 weeks — it takes 2 weeks. The goal is that you actually understand it, not that you hit some arbitrary deadline.
-
----
 
 ## ⏱️ My Current Progress
 
